@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'login',
+    'background',
     'captcha',
     'django.contrib.admin',
     'django.contrib.auth',

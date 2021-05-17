@@ -3,7 +3,6 @@ import hashlib
 
 from django.shortcuts import redirect
 from django.shortcuts import render
-# from loginRegisterByLiuj.send_email_valid import send_email
 
 from . import forms
 from . import models
@@ -12,7 +11,7 @@ from django.conf import settings
 
 # Create your views here.
 
-def hash_code(s, salt='bflme'):
+def hash_code(s, salt='bflame'):
     h = hashlib.sha256()
     s += salt
     h.update(s.encode())
@@ -25,41 +24,6 @@ def index(request):
     return render(request, 'login/index.html')
 
 
-# def login(request):
-#     if request.session.get('is_login', None):
-#         return redirect('/index/')
-#
-#     if request.method == "POST":
-#         login_form = forms.UserForm(request.POST)
-#         message = '请检查你的输入内容是否正确！！'
-#         if login_form.is_valid():
-#             # username = request.POST.get('username')
-#             # password = request.POST.get('password')
-#             username = login_form.cleaned_data.get('username')
-#             password = login_form.cleaned_data.get('password')
-#             if username.strip() and password:
-#
-#                 try:
-#                     user = models.User.objects.get(name=username )
-#
-#                 except:
-#                     message = '用户不存在！！'
-#                     return render(request, 'login/login.html',locals())
-#                 if user.password == password:
-#                     print(username, password)
-#                     request.session['is_login'] = True
-#                     request.session['user_id'] = user.id
-#                     request.session['user_name'] = user.name
-#
-#                     return redirect('/index/')
-#                 else:
-#                     message = '密码错误，请重新登录'
-#                     return render(request, 'login/login.html', locals())
-#
-#         else:
-#             return render(request, 'login/login.html',locals())
-#     login_form = forms.UserForm()
-#     return render(request, 'login/login.html',locals())
 
 def login(request):
     if request.session.get('is_login', None):  # 不允许重复登录
@@ -94,6 +58,7 @@ def login(request):
 
     login_form = forms.UserForm()
     return render(request, 'login/login.html', locals())
+
 
 def register(request):
     if request.session.get('is_login', None):
@@ -145,7 +110,6 @@ def logout(request):
     request.session.flush()
     return redirect("/login/")
 
-
 def make_confirm_string(user):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     code = hash_code(user.name, now)
@@ -174,9 +138,7 @@ def user_confirm(request):
         message = '感谢确认，请使用账户登录！'
         return render(request, 'login/confirm.html', locals())
 
-import os
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
+
 
 def send_email(email, code):
 
