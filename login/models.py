@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+# Create your models here.1
 
 
 class User(models.Model):
@@ -9,13 +9,23 @@ class User(models.Model):
         ('male', "男"),
         ('female', "女"),
     )
+    rate = {
+        ('5','AAA'),
+        ('4','AA'),
+        ('3','A'),
+        ('2','B'),
+        ('1','C'),
+    }
 
-    name = models.CharField(max_length=128, unique=True)
-    password = models.CharField(max_length=256)
-    email = models.EmailField(unique=True)
-    sex = models.CharField(max_length=32, choices=gender, default="男")
-    c_time = models.DateTimeField(auto_now_add=True)
-    has_confirmed = models.BooleanField(default=False)
+    name = models.CharField(max_length=128, unique=True,verbose_name="用户名")
+    password = models.CharField(max_length=256,verbose_name="密码")
+    email = models.EmailField(unique=True,verbose_name="邮箱")
+    sex = models.CharField(max_length=32, choices=gender, default="男",verbose_name="邮箱")
+    register_time = models.DateTimeField(auto_now_add=True,verbose_name="注册时间")
+    last_login_time = models.DateTimeField(verbose_name="上次登录时间",blank=True)
+    has_confirmed = models.BooleanField(default=False,verbose_name="是否已经邮箱验证")
+    Id_number = models.CharField(max_length=20,primary_key=True,verbose_name="身份证号")
+    credit_rating = models.CharField(max_length=10,choices=rate,default='B',verbose_name="信用等级")
 
     def __str__(self):
         return self.name
