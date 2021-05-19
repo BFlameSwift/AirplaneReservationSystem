@@ -3,12 +3,7 @@ from django import  forms
 
 class FlightrForm(forms.Form):
     flight_number = forms.CharField(max_length=30,  label="航班号", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    filght_level = {
-        ('1', '头等舱'),
-        ('2', '高端经济舱'),
-        ('3', '商务舱'),
-        ('4', '经济舱')
-    }
+
     plane_type_choices = [
         ('波音', (
             ('1', '747'),
@@ -35,5 +30,7 @@ class FlightrForm(forms.Form):
     highlevel_economy_class_price =  forms.FloatField(label="高级经济舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
     business_class_price =  forms.FloatField(label="商务舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
     economy_class_price =  forms.FloatField(label="经济舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
+
+
     # book_sum = forms.IntegerField(label="订票总数")
     # plane_capacity = forms.IntegerField(label="飞机容量")

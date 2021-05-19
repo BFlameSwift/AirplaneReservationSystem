@@ -29,15 +29,6 @@ def index(request):
 @csrf_exempt
 def login(request):
 
-    # response = [
-    #     {'status_code': 0, 'message': '登录成功！'},
-    #     {'status_code': 1, 'message': '用户已登录！'},
-    #     {'status_code': 2, 'message': '用户名不存在！'},
-    #     {'status_code': 3, 'message': '密码不正确！'},
-    #     {'status_code': 4, 'message': '该用户还未经过邮件确认！'},
-    #     {'status_code': 5, 'message': '请检查填写的内容！'},
-    # ]
-
 
     if request.session.get('is_login', None):  # 不允许重复登录
         return redirect('/index/')

@@ -8,57 +8,64 @@
     <!-- 上述meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <!-- Bootstrap CSS -->
     <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{% static 'login/css/register.css' %}" rel="stylesheet"/>
-    <title>注册</title>
+    <link href="{% static 'background/css/background.css' %}" rel="stylesheet"/>
+    <title>录入航班信息</title>
   </head>
   <body>
     <div class="container">
             <div class="col">
-                <form class="form-register" action="/register/" method="post">
+                <form class="form-background" action="/background/" method="post">
 
-{#                    {% if register_form.captcha.errors %}#}
-{#                        <div class="alert alert-warning">{{ register_form.captcha.errors }}</div>#}
+{#                    {% if flight_form.captcha.errors %}#}
+{#                        <div class="alert alert-warning">{{ flight_form.captcha.errors }}</div>#}
                     {% if message %}
 {#                    {% elif message %}#}
                         <div class="alert alert-warning">{{ message }}</div>
                     {% endif %}
 
                   {% csrf_token %}
-                  <h3 class="text-center">欢迎注册</h3>
+                  <h3 class="text-center">欢迎录入信息</h3>
 
                   <div class="form-group">
-                      {{ register_form.username.label_tag }}
-                      {{ register_form.username}}
+                      {{ flight_form.flight_number.label_tag }}
+                      {{ flight_form.flight_number}}
                   </div>
                   <div class="form-group">
-                      {{ register_form.password1.label_tag }}
-                      {{ register_form.password1 }}
+                      {{ flight_form.origination.label_tag }}
+                      {{ flight_form.origination }}
                   </div>
                   <div class="form-group">
-                      {{ register_form.password2.label_tag }}
-                      {{ register_form.password2 }}
+                      {{ flight_form.destination.label_tag }}
+                      {{ flight_form.destination }}
                   </div>
                 <div class="form-group">
-                      {{ register_form.Id_number.label_tag }}
-                      {{ register_form.Id_number }}
+                      {{ flight_form.starting_time.label_tag }}
+                      {{ flight_form.starting_time }}
                   </div>
                   <div class="form-group">
-                      {{ register_form.email.label_tag }}
-                      {{ register_form.email }}
+                      {{ flight_form.arrival_time.label_tag }}
+                      {{ flight_form.arrival_time }}
                   </div>
                   <div class="form-group">
-                      {{ register_form.sex.label_tag }}
-                      {{ register_form.sex }}
+                      {{ flight_form.first_class_price.label_tag }}
+                      {{ flight_form.first_class_price }}
                   </div>
-{#                  <div class="form-group">#}
-{#                      {{ register_form.captcha.label_tag }}#}
-{#                      {{ register_form.captcha }}#}
-{#                  </div>#}
+                    <div class="form-group">
+                      {{ flight_form.highlevel_economy_class_price.label_tag }}
+                      {{ flight_form.highlevel_economy_class_price }}
+                  </div>
+                <div class="form-group">
+                      {{ flight_form.business_class_price.label_tag }}
+                      {{ flight_form.business_class_price }}
+                  </div>
 
-                  <div>
-                      <a href="/login/"  ><ins>直接登录</ins></a>
-                      <button type="submit" class="btn btn-primary float-right">注册</button>
+                    <div class="form-group">
+                      {{ flight_form.economy_class_price.label_tag }}
+                      {{ flight_form.economy_class_price }}
                   </div>
+{#
+
+
                 </form>
             </div>
     </div> <!-- /container -->

@@ -36,6 +36,7 @@ def entry_flight(request):
                     'destination': destination,
                     'starting_time': starting_time,
                     'arrival_time': arrival_time,
+                    # 'local()':locals(),
 
                 },
 
@@ -44,10 +45,11 @@ def entry_flight(request):
             try:
                 same_id_flight = models.Flight.objects.get(flight_number=flight_number)
                 message = '航班已经存在'
-                return render(request, 'background/background..html', locals())
+                return render(request, 'flight/background..html', locals())
             except :
 
             # TODO 检测航班号是否非法
+
                 new_flight = models.Flight()
                 new_flight.flight_number = flight_number
                 new_flight.origination = origination
@@ -58,8 +60,12 @@ def entry_flight(request):
                 new_flight.highlevel_economy_class_price = highlevel_economy_class_price
                 new_flight.business_class_price = business_class_price
                 new_flight.economy_class_price = economy_class_price
-                print(locals())
+                new_flight.flight_time = arrival_time
+                new_flight.book_sum = 0
+                # new_flight.save()
 
+                print(locals())
+                # return render(request,'flight/background.html',locals())
                 return JsonResponse(response[0])
         else:
             print(flight_form)
