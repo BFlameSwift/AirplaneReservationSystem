@@ -51,6 +51,8 @@ class Order(models.Model):
     price = models.FloatField(verbose_name="机票价格")
     order_time = models.DateTimeField(auto_now_add=True,verbose_name="订单创建时间")
     seat_number = models.IntegerField(verbose_name="座位号",)
+    order_is_valid = models.BooleanField(verbose_name="订单是否有效",default=True)
+    #购买成功时生成订单，退订机票时为失效
 
     filght_level = {
         ('1', '头等舱'),
@@ -64,6 +66,7 @@ class Order(models.Model):
         # default='经济舱',
         verbose_name="舱位类型",
     )
+
 
 
 

@@ -28,8 +28,11 @@ class User(models.Model):
     last_login_time = models.DateTimeField(auto_now=True,verbose_name="上次登录时间")
 
     Id_number = models.CharField(max_length=20,unique=True,verbose_name="身份证号")
-    credit_rating = models.CharField(max_length=10,choices=rate,default='B',verbose_name="信用等级")
+    credit_rating = models.CharField(max_length=10,choices=rate,default='3',verbose_name="信用等级")
     has_confirmed = models.BooleanField(default=False, verbose_name="是否已经邮箱验证")
+
+    flight_mileage = models.FloatField(verbose_name="飞行里程", default=0)
+    total_consumption = models.FloatField(verbose_name="消费总额", default=0)
 
 
     def __str__(self):
