@@ -3,6 +3,8 @@ import hashlib
 
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from . import forms
 from . import models
@@ -23,9 +25,20 @@ def index(request):
         return redirect('/login/')
     return render(request, 'login/index.html')
 
-
-
+# postman 使用x-www-form-urlencoded模式即可
+@csrf_exempt
 def login(request):
+
+    response = [
+        {'status_code': 0, 'message': '登录成功！'},
+        {'status_code': 1, 'message': '用户已登录！'},
+        {'status_code': 2, 'message': '用户名不存在！'},
+        {'status_code': 3, 'message': '密码不正确！'},
+        {'status_code': 4, 'message': '该用户还未经过邮件确认！'},
+        {'status_code': 5, 'message': '请检查填写的内容！'},
+    ]
+
+
     if request.session.get('is_login', None):  # 不允许重复登录
         return redirect('/index/')
     if request.method == 'POST':
@@ -39,27 +52,33 @@ def login(request):
                 user = models.User.objects.get(name=username)
             except :
                 message = '用户不存在！'
-                return render(request, 'login/login.html', locals())
+                return JsonResponse(response[2])
+                # return render(request, 'login/login.html', locals())
 
             if not user.has_confirmed:
                 message = '该用户还未经过邮件确认！'
-                return render(request, 'login/login.html', locals())
+                return JsonResponse(response[4])
+                # return render(request, 'login/login.html', locals())
 
             if user.password == password:
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.name
-                return redirect('/index/')
+                return JsonResponse(response[0])
+                # return redirect('/index/')
             else:
                 message = '密码不正确！'
-                return render(request, 'login/login.html', locals())
+                return JsonResponse(response[3])
+                # return render(request, 'login/login.html', locals())
         else:
-            return render(request, 'login/login.html', locals())
+            return JsonResponse(response[5])
+            # return render(request, 'login/login.html', locals())
 
     login_form = forms.UserForm()
-    return render(request, 'login/login.html', locals())
+    return JsonResponse({})
+    # return render(request, 'login/login.html', locals())
 
-
+@csrf_exempt
 def register(request):
     if request.session.get('is_login', None):
         return redirect('/index/')
