@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from login import views
+from background.views import entry_flight
 from django.urls import include
 
 urlpatterns = [
@@ -27,4 +28,5 @@ urlpatterns = [
     path('logout/', views.logout),
     # path('captcha/',include('captcha.urls')),
     path('confirm/', views.user_confirm),
+    path('background/',entry_flight),
 ]

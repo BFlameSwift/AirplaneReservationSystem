@@ -1,15 +1,11 @@
 from django.db import models
+from login.models import User
 
 # Create your models here.
 
 class Flight(models.Model):
     flight_number = models.CharField(max_length=30, primary_key=True, verbose_name="航班号")
-    filght_level = {
-            ('1','头等舱'),
-            ('2', '高端经济舱'),
-            ('3','商务舱'),
-            ('4','经济舱')
-        }
+
     plane_type_choices = [
         ('波音', (
             ('1', '747'),
@@ -25,12 +21,7 @@ class Flight(models.Model):
         )
          ),
     ]
-    flight_type = models.CharField(
-        max_length=1,
-        choices=filght_level,
-        default='经济舱',
-        verbose_name="航班类型",
-    )
+
     origination = models.CharField(max_length=30, verbose_name="始发地", blank=False)
     destination = models.CharField(max_length=30, verbose_name="目的地", blank=False)
     starting_time = models.TimeField(verbose_name="始发时间", blank=False)
@@ -52,6 +43,27 @@ class Flight(models.Model):
     #         models.CheckConstraint(check=models.)
     #
     #     ]
+
+class Order(models.Model):
+    order_number = models.AutoField(primary_key=True,verbose_name = "订单编号")
+    flight_number = models.ForeignKey(Flight,verbose_name="航班号",on_delete=models.CASCADE)
+    Id_number = models.ForeignKey(User,verbose_name="身份证号",on_delete=models.CASCADE)
+    price = models.FloatField(verbose_name="机票价格")
+    order_time = models.DateTimeField(auto_now_add=True,verbose_name="订单创建时间")
+    seat_number = models.IntegerField(verbose_name="座位号",)
+
+    filght_level = {
+        ('1', '头等舱'),
+        ('2', '高端经济舱'),
+        ('3', '商务舱'),
+        ('4', '经济舱')
+    }
+    flight_type = models.CharField(
+        max_length=1,
+        choices=filght_level,
+        # default='经济舱',
+        verbose_name="舱位类型",
+    )
 
 
 
