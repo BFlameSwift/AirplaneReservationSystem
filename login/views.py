@@ -29,14 +29,14 @@ def index(request):
 @csrf_exempt
 def login(request):
 
-    response = [
-        {'status_code': 0, 'message': '登录成功！'},
-        {'status_code': 1, 'message': '用户已登录！'},
-        {'status_code': 2, 'message': '用户名不存在！'},
-        {'status_code': 3, 'message': '密码不正确！'},
-        {'status_code': 4, 'message': '该用户还未经过邮件确认！'},
-        {'status_code': 5, 'message': '请检查填写的内容！'},
-    ]
+    # response = [
+    #     {'status_code': 0, 'message': '登录成功！'},
+    #     {'status_code': 1, 'message': '用户已登录！'},
+    #     {'status_code': 2, 'message': '用户名不存在！'},
+    #     {'status_code': 3, 'message': '密码不正确！'},
+    #     {'status_code': 4, 'message': '该用户还未经过邮件确认！'},
+    #     {'status_code': 5, 'message': '请检查填写的内容！'},
+    # ]
 
 
     if request.session.get('is_login', None):  # 不允许重复登录
@@ -52,31 +52,31 @@ def login(request):
                 user = models.User.objects.get(name=username)
             except :
                 message = '用户不存在！'
-                return JsonResponse(response[2])
-                # return render(request, 'login/login.html', locals())
+                # return JsonResponse(response[2])
+                return render(request, 'login/login.html', locals())
 
             if not user.has_confirmed:
                 message = '该用户还未经过邮件确认！'
-                return JsonResponse(response[4])
-                # return render(request, 'login/login.html', locals())
+                # return JsonResponse(response[4])
+                return render(request, 'login/login.html', locals())
 
             if user.password == password:
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.name
-                return JsonResponse(response[0])
-                # return redirect('/index/')
+                # return JsonResponse(response[0])
+                return redirect('/index/')
             else:
                 message = '密码不正确！'
-                return JsonResponse(response[3])
-                # return render(request, 'login/login.html', locals())
+                # return JsonResponse(response[3])
+                return render(request, 'login/login.html', locals())
         else:
-            return JsonResponse(response[5])
-            # return render(request, 'login/login.html', locals())
+            # return JsonResponse(response[5])
+            return render(request, 'login/login.html', locals())
 
     login_form = forms.UserForm()
-    return JsonResponse({})
-    # return render(request, 'login/login.html', locals())
+    # return JsonResponse({})
+    return render(request, 'login/login.html', locals())
 
 @csrf_exempt
 def register(request):
@@ -92,6 +92,7 @@ def register(request):
             password2 = register_form.cleaned_data.get('password2')
             email = register_form.cleaned_data.get('email')
             sex = register_form.cleaned_data.get('sex')
+            Id_number = register_form.cleaned_data.get('Id_number')
 
             if password1 != password2:
                 message = '两次输入的密码不同！'
@@ -111,6 +112,8 @@ def register(request):
                 new_user.password = password1
                 new_user.email = email
                 new_user.sex = sex
+                new_user.Id_number = Id_number
+                new_user.credit_rating = '2'
                 new_user.save()
 
                 code = make_confirm_string(new_user)

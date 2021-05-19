@@ -47,6 +47,11 @@ class Flight(models.Model):
     plane_type = models.CharField(verbose_name="飞机型号", max_length=30, choices=plane_type_choices)
     plane_capacity = models.IntegerField(verbose_name="飞机容量", blank=True)
 
+    # class Meta:
+    #     constraints = [
+    #         models.CheckConstraint(check=models.)
+    #
+    #     ]
 
 
 
