@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from login import views
 from background.views import entry_flight
+from background.views import delete_flight
 from django.urls import include
 
 urlpatterns = [
@@ -28,5 +29,8 @@ urlpatterns = [
     path('logout/', views.logout),
     path('captcha/',include('captcha.urls')),
     path('confirm/', views.user_confirm),
-    path('background/',entry_flight),
+    path('background/entry_flight/',entry_flight),
+    path('background/delete_flight/',delete_flight),
+
+
 ]

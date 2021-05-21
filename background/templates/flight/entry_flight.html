@@ -14,12 +14,9 @@
   <body>
     <div class="container">
             <div class="col">
-                <form class="form-background" action="/background/" method="post">
+                <form class="form-background" action="/background/entry_flight/" method="post">
 
-{#                    {% if flight_form.captcha.errors %}#}
-{#                        <div class="alert alert-warning">{{ flight_form.captcha.errors }}</div>#}
                     {% if message %}
-{#                    {% elif message %}#}
                         <div class="alert alert-warning">{{ message }}</div>
                     {% endif %}
 
@@ -63,7 +60,18 @@
                       {{ flight_form.economy_class_price.label_tag }}
                       {{ flight_form.economy_class_price }}
                   </div>
-{#
+                   <div class="form-group">
+                      {{ flight_form.departure_airport.label_tag }}
+                      {{ flight_form.departure_airport }}
+                  </div>
+                   <div class="form-group">
+                      {{ flight_form.landing_airport.label_tag }}
+                      {{ flight_form.landing_airport }}
+                  </div>
+                <div>
+{#                      <a href="/register/" class="text-success " ><ins>新用户注册</ins></a>#}
+                      <button type="submit" class="btn btn-primary float-right">提交航班信息</button>
+                  </div>
 
 
                 </form>

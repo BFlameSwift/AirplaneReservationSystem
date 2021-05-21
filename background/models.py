@@ -23,8 +23,8 @@ class Flight(models.Model):
     ]
     origination = models.CharField(max_length=32, verbose_name="始发地")
     destination = models.CharField(max_length=32, verbose_name="目的地")
-    departure_airport = models.CharField(max_length=32,verbose_name="始发机场",unique=True)
-    landing_airport = models.CharField(max_length=32,verbose_name="目的机场",unique=True)
+    departure_airport = models.CharField(max_length=64,verbose_name="始发机场")
+    landing_airport = models.CharField(max_length=64,verbose_name="目的机场")
 
     starting_time = models.TimeField(verbose_name="始发时间", blank=False)
     flight_time = models.TimeField(verbose_name="飞行时间",blank=True)
@@ -54,6 +54,7 @@ class Order(models.Model):
     order_time = models.DateTimeField(auto_now_add=True,verbose_name="订单创建时间")
     seat_number = models.IntegerField(verbose_name="座位号",)
     order_is_valid = models.BooleanField(verbose_name="订单是否有效",default=True)
+    luggage_weight = models.FloatField(verbose_name="行李重量",default=0)
     #购买成功时生成订单，退订机票时为失效
 
     filght_level = {
