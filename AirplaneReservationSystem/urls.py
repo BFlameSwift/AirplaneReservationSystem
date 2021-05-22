@@ -20,6 +20,7 @@ from background.views import entry_flight
 from background.views import delete_flight
 from django.urls import include
 
+from login.views import *
 urlpatterns = [
 
     path('admin/', admin.site.urls),

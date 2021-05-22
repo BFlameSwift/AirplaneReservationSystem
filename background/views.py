@@ -165,3 +165,4 @@ def check_flight_number(flight_number):
     if not flight_number[2:6].isdigit():
         return False
     return len(flight_number) == 6
+

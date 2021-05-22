@@ -29,7 +29,6 @@ def index(request):
 @csrf_exempt
 def login(request):
 
-
     if request.session.get('is_login', None):  # 不允许重复登录
         return redirect('/index/')
     if request.method == 'POST':
@@ -172,3 +171,6 @@ def send_email(email, code):
     msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+
+

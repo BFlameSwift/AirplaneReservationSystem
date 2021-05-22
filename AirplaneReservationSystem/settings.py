@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'login',
     'background',
     'captcha',
+    'kernel',
+    # 'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -145,3 +147,4 @@ EMAIL_HOST_PASSWORD = 'QBUCCRELRTNZJJWV'
 
 CONFIRM_DAYS = 7
 # 此处密码应为开启 SMTP 的授权码
+
