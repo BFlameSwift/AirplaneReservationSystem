@@ -21,6 +21,7 @@ class User(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=128, unique=True,verbose_name="用户名")
+    real_name = models.CharField(max_length=128,blank=True,verbose_name="真实姓名")
     password = models.CharField(max_length=256,verbose_name="密码")
     email = models.EmailField(unique=True,verbose_name="邮箱")
     sex = models.CharField(max_length=32, choices=gender, default="男",verbose_name="邮箱")

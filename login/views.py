@@ -83,7 +83,7 @@ def register(request):
             email = register_form.cleaned_data.get('email')
             sex = register_form.cleaned_data.get('sex')
             Id_number = register_form.cleaned_data.get('Id_number')
-
+            real_name = register_form.cleaned_data.get('real_name')
             if password1 != password2:
                 message = '两次输入的密码不同！'
                 return render(request, 'login/register.html', locals())
@@ -104,6 +104,7 @@ def register(request):
                 new_user.sex = sex
                 new_user.Id_number = Id_number
                 new_user.credit_rating = '2'
+                new_user.real_name = real_name
                 new_user.save()
 
                 code = make_confirm_string(new_user)
