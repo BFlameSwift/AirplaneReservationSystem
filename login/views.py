@@ -4,12 +4,19 @@ import hashlib
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
+from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
+from django.forms.models import model_to_dict
+
+import background.models
 from . import forms
 from . import models
+
 from django.conf import settings
 
+import json
 
 # Create your views here.
 
@@ -20,10 +27,30 @@ def hash_code(s, salt='bflame'):
     return h.hexdigest()
 
 
-def index(request):
+def index(request): # 个人中心，
+    # 向前端传送个人的全部信息和个人的全部订单
     if not request.session.get('is_login',None):
         return redirect('/login/')
-    return render(request, 'login/index.html')
+    username = request.session.get('user_name')
+    user = models.User.objects.get(name = username)
+    user_dict = model_to_dict(user)
+    # 应该可以通过user.''来访问
+    # print(json.dumps(user))
+    # print(user_value)
+    try:
+        order = background.models.Order.objects.get()
+
+    except background.models.Order.DoesNotExist:
+        message = '订单不存在'
+        return JsonResponse({'message':message})
+    # data = serializers.serialize('xml',models.User.objects.all(),fileds = ('name','password'))
+    # List = list(flight_list)
+    return JsonResponse(json.dumps({'user':user_dict,'order':model_to_dict(order)},cls=DjangoJSONEncoder),safe=False)
+    # return render(request, 'login/index.html')
+
+def  change_information(request):
+    pass
+# TODO 逐个更改个人信息
 
 # postman 使用x-www-form-urlencoded模式即可
 @csrf_exempt
@@ -95,6 +122,10 @@ def register(request):
                 same_email_user = models.User.objects.filter(email=email)
                 if same_email_user:
                     message = '该邮箱已经被注册了！'
+                    return render(request, 'login/register.html', locals())
+                same_id_number_user = models.User.objects.filter(Id_number = Id_number)
+                if same_id_number_user:
+                    message = '相同的身份证号已经存在'
                     return render(request, 'login/register.html', locals())
 
                 new_user = models.User()
@@ -172,6 +203,5 @@ def send_email(email, code):
     msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
-
 
 

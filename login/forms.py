@@ -6,7 +6,7 @@ class UserForm(forms.Form):
         attrs={'class': 'form-control', 'placeholder': "Username", 'autofocus': ''}))
     password =  forms.CharField(label="密码", max_length=128, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': "Password"}))
 
-    captcha = CaptchaField(label="验证码")
+    # captcha = CaptchaField(label="验证码")
     
 
 class RegisterForm(forms.Form):

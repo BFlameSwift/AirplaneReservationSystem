@@ -1,9 +1,11 @@
-{% extends 'test_orm/base.html' %}
+{% extends 'base.html' %}
 {% block page_content %}
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">员工列表</h3> <!--这里加标题 //-->
     </div>
+
+
     <div class="panel-body"> <!--将表格放在这个<div class="panel-body">的标签中 //-->
         <div class="row">
             <div class="col-md-3 pull-right" style="margin-bottom:15px ">
@@ -15,23 +17,23 @@
         <table class="table table-bordered table-condensed table-striped table-hover"> <!--给表格增加bootstrap样式 //-->
             <thead>
             <tr>
-                <th>姓名</th>
-                <th>邮件</th>
-                <th>薪水</th>
-                <th>地址</th>
-                <th>部门</th>
-                <th>团队</th>
+                <th>航班号</th>
+                <th>起飞机场</th>
+                <th>降落机场</th>
+                <th>起飞时间</th>
+                <th>降落时间</th>
+<!--                <th>团队</th>-->
                 <th colspan="2">操作</th>
             </tr>
             </thead>
             <tbody>
-            {% for emp in emp_list %}
+            {% for flight in flight_list %}
             <tr>
-                <td>{{ emp.name }}</td>
-                <td>{{ emp.email }}</td>
-                <td>{{ emp.salary }}</td>
-                <td>{{ emp.info.address }}</td>
-                <td>{{ emp.dep.dep_name }}</td>
+                <td>{{ flight.flight_number }}</td>
+                <td>{{ flight.departure_airport }}</td>
+                <td>{{ flight.landing_airport }}</td>
+                <td>{{ flight.starting_time}}</td>
+                <td>{{ flight.arrival_time }}</td>
                 <td>
                     {% for gp in emp.group.all %}
                     {% if forloop.last %}
@@ -56,6 +58,39 @@
 
     </div>
 </div>
+  <div class="container">
+            <div class="col">
+                <form class="form-login" action="/query_flight/" method="post">
+
+                {% if message %}
+                    <div class="alert alert-warning">{{ message }}</div>
+                {% endif %}
+
+                  {% csrf_token %}
+                  <h3 class="text-center">查询航班</h3>
+
+                  <div class="form-group">
+                    {{ login_form.username.label_tag }}
+                    {{ login_form.username }}
+                  </div>
+
+                  <div class="form-group">
+                    {{ login_form.password.label_tag }}
+                    {{ login_form.password }}
+                  </div>
+
+                  <div class="form-group">
+                    {{ login_form.captcha.label_tag }}
+                    {{ login_form.captcha }}
+                  </div>
+
+                  <div>
+                      <button type="submit" class="btn btn-primary float-right">查询航班</button>
+                  </div>
+                </form>
+            </div>
+    </div> <!-- /container -->
+
 {% endblock %}
 <!-- 以下block块给样式类赋值，class="active"//-->
 {% block employeecls %}

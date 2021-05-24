@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+
+import kernel.views
 from login import views
 from background.views import entry_flight
 from background.views import delete_flight
+from kernel.views import *
 from django.urls import include
 
 from login.views import *
@@ -32,6 +35,11 @@ urlpatterns = [
     path('confirm/', views.user_confirm),
     path('background/entry_flight/',entry_flight),
     path('background/delete_flight/',delete_flight),
+
+    path('query_flight/',query_flight),
+
+    path('book_ticket/',kernel.views.book_ticket),
+    path('cancel_ticket/',kernel.views.cancel_ticket),
 
 
 ]

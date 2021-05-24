@@ -25,7 +25,7 @@ def paysView(request):
         else:
             return JsonResponse({'message': '订单金额不正确'})
     else:
-        return render(request,'pay.html',locals())
+        return render(request, 'book_ticket.html', locals())
         # return JsonResponse({'message': '你的请求不是POST'})
         # return redirect('shopper:shopcart')# TODO ###
 

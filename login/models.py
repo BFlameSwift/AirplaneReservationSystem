@@ -40,7 +40,6 @@ class User(models.Model):
     # is_super
     profession = models.CharField(blank=True,verbose_name="职业",max_length=32)
 
-
     def __str__(self):
         return self.name
 
@@ -48,6 +47,7 @@ class User(models.Model):
         ordering = ["-register_time"]
         verbose_name = "用户"
         verbose_name_plural = "用户"
+        # db_table = 'user'
 
 
 class ConfirmString(models.Model):

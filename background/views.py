@@ -30,6 +30,8 @@ def entry_flight(request):
             highlevel_economy_class_price = flight_form.cleaned_data.get('highlevel_economy_class_price')
             business_class_price = flight_form.cleaned_data.get('business_class_price')
             economy_class_price = flight_form.cleaned_data.get('economy_class_price')
+            plane_type = flight_form.cleaned_data.get('plane_type')
+
             message = '航班创建成功'
             response = [
                 {
@@ -64,8 +66,7 @@ def entry_flight(request):
                 same_id_flight = models.Flight.objects.get(flight_number=flight_number)
                 message = '已存在相同航班，请先检查历史航班'
                 return render(request, 'flight/entry_flight.html', locals())
-                # return JsonResponse(response[1])
-                # return render(request, 'flight/background..html', locals())
+
             except :
                 if not check_flight_number(flight_number):
                     message='航班号输入格式有误'
@@ -82,6 +83,7 @@ def entry_flight(request):
                     # return JsonResponse(response[4])
 
                 new_flight = models.Flight()
+                new_flight.plane_type = plane_type
                 new_flight.flight_number = flight_number
                 new_flight.origination = origination
                 new_flight.destination = destination
@@ -105,7 +107,9 @@ def entry_flight(request):
 
                 # new_flight.flight_time = datetime.time(a_time.hour-s_time.hour,)
                 new_flight.book_sum = 0
-                new_flight.plane_capacity = 200# TODO 根据飞机型号定制
+                new_flight.plane_capacity = setting_plane_capacity(plane_type)
+                # new_flight.plane_capacity = 200# 根据飞机型号定制 完成
+
                 new_flight.save()
                 # time_interval = arrival_time.timestamp() - starting_time.timestamp()
                 # print('time_interval'+time_interval)
@@ -114,7 +118,8 @@ def entry_flight(request):
                 # return render(request,'flight/background.html',locals())
                 return render(request, 'flight/entry_flight.html', locals())
         else:
-            message = '请检查输入航班信息'
+            # TODO 对输入信息逐个处理分别输出相应的错误信息
+            message = '请检查输入航班信息是否有效'
             flight_form = forms.FlightrForm()
             return render(request, 'flight/entry_flight.html', locals())
     else:
@@ -165,4 +170,30 @@ def check_flight_number(flight_number):
     if not flight_number[2:6].isdigit():
         return False
     return len(flight_number) == 6
+
+def setting_plane_capacity(plane_type):
+    num = 200
+    # 数据以中国国际航空公司的主要数据为准
+    if plane_type == '1':
+        num = 365
+        # 波音747
+    elif plane_type == '2':
+        num = 311
+        # 波音777
+    elif plane_type == '3':
+        num = 293
+        # 波音787-9
+    elif plane_type == '4':
+        num = 259
+        #空客A300B1
+    elif plane_type == '5':
+        num = 220
+        # 空客310-300
+    elif plane_type == '6':
+        num = 180
+        # 空客320-200
+    elif plane_type == '7':
+        num = 440
+        #空客350-900
+    return int(num)
 

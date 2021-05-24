@@ -9,15 +9,15 @@ class Flight(models.Model):
     plane_type_choices = [
         ('波音', (
             ('1', '747'),
-            ('2', '767'),
-            ('3', '777'),
+            ('2', '777'),
+            ('3', '787'),
         )
          ),
         ('空客', (
             ('4', 'A300'),
             ('5', 'A310'),
             ('6', 'A320'),
-            ('7', 'A340'),
+            ('7', 'A350'),
         )
          ),
     ]
@@ -39,7 +39,13 @@ class Flight(models.Model):
     plane_type = models.CharField(verbose_name="飞机型号", max_length=30, choices=plane_type_choices)
     plane_capacity = models.IntegerField(verbose_name="飞机容量", blank=True)
 
+
+
     # class Meta:
+    # db_table = 'flight'
+    class Meta:
+        verbose_name ='航班信息'
+        verbose_name_plural = '航班信息'
     # 基本约束还没添加
     #     constraints = [
     #         models.CheckConstraint(check=models.)
@@ -48,8 +54,8 @@ class Flight(models.Model):
 
 class Order(models.Model):
     order_number = models.AutoField(primary_key=True,verbose_name = "订单编号")
-    flight_number = models.ForeignKey(Flight,verbose_name="航班号",on_delete=models.CASCADE)
-    Id_number = models.ForeignKey(User,verbose_name="身份证号",on_delete=models.CASCADE)
+    flight = models.ForeignKey(Flight,verbose_name="航班",on_delete=models.CASCADE,default=0)
+    user = models.ForeignKey(User,verbose_name="用户",on_delete=models.CASCADE,default=0)
     price = models.FloatField(verbose_name="机票价格")
     order_time = models.DateTimeField(auto_now_add=True,verbose_name="订单创建时间")
     seat_number = models.IntegerField(verbose_name="座位号",)
@@ -70,7 +76,8 @@ class Order(models.Model):
         verbose_name="舱位类型",
     )
 
-
+    # class Meta:
+        # da_table = 'order'
 
 
 
