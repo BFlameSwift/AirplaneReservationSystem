@@ -163,7 +163,24 @@ def delete_flight(request):
 def produce_flight_from_date_to_date(flight,start,end):
     start = datetime.date(start)
     end = datetime.date(end)
-    
+    days = int(end.day-start.day)
+    for i in range(days):
+        date = datetime.date
+        xday = datetime.timedelta(days=i)
+        date = start+xday
+        # date.day = date.day+int(i)
+        new_flight = models.Concrete_flight()
+        new_flight.flight = flight
+        new_flight.book_sum = 0
+        new_flight.plane_capacity = flight.plane_capacity
+        time = flight.flight_time
+        # time = datetime.time()
+        new_flight.flight_datetime = datetime.datetime(
+            year=date.year,month=date.month,day=date.day,
+            hour=time.hour,minute=time.minute,second=time.second
+        )
+        new_flight.save()
+
     pass
 # 从起始到终止产生相同时间的航班到数据库中。
 #从道理来讲，航班也总会有停止运行的时间
