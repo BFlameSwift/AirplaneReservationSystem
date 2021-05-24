@@ -12,10 +12,14 @@
   <body>
     <div class="container">
             <div class="col">
-              <form class="form-pay" action="/pay/" method="post">
+              <form class="form-pay" action="/book_ticket/" method="post">
+
+                  {% if message %}
+                    <div class="alert alert-warning">{{ message }}</div>
+                {% endif %}
                   <h3 class="text-center">提交订单</h3>
                   <div class="form-group">
-                    <label for="id_flight_number">金额：</label>
+                    <label for="id_flight_number">航班号</label>
                     <input type="text" name='flight_number' class="form-control" id="id_flight_number" placeholder="航班号" autofocus required>
                   </div>
                    <div class="form-group">

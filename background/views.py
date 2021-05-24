@@ -160,7 +160,14 @@ def delete_flight(request):
         # return JsonResponse({'message': message})
         return render(request, 'flight/delete_flight.html', locals())
 
-
+def produce_flight_from_date_to_date(flight,start,end):
+    start = datetime.date(start)
+    end = datetime.date(end)
+    
+    pass
+# 从起始到终止产生相同时间的航班到数据库中。
+#从道理来讲，航班也总会有停止运行的时间
+# 如果未来设置航班总需要这个东西。为了保证航班号作为逐主键存在于数据库中
 
 def check_flight_number(flight_number):
     flight_number = str(flight_number)

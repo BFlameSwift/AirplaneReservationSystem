@@ -69,6 +69,7 @@ def book_ticket(request):
 
         money = float(request.POST.get('money'))
         flight_number = request.POST.get('flight_number')
+        print(money,flight_number)
         try:
             flight = Flight.objects.get(flight_number = flight_number)
             if user.balance < money:
@@ -79,6 +80,7 @@ def book_ticket(request):
             # 所以这里使用函数来支付，因为当上面选择支付宝支付的时候也是成功支付了
             pay_ticket(user,flight,money)
             message = '支付成功'
+            print(message)
             return render(request, 'book_ticket.html', locals())
 
         except Flight.DoesNotExist:# 航班不存在
