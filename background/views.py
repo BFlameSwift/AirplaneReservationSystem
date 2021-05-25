@@ -160,14 +160,15 @@ def delete_flight(request):
         # return JsonResponse({'message': message})
         return render(request, 'flight/delete_flight.html', locals())
 
+
 def produce_flight_from_date_to_date(flight,start,end):
     start = datetime.date(start)
     end = datetime.date(end)
-    days = int(end.day-start.day)
+    days = int(end.day - start.day)
     for i in range(days):
         date = datetime.date
         xday = datetime.timedelta(days=i)
-        date = start+xday
+        date = start + xday
         # date.day = date.day+int(i)
         new_flight = models.Concrete_flight()
         new_flight.flight = flight
@@ -181,7 +182,8 @@ def produce_flight_from_date_to_date(flight,start,end):
         )
         new_flight.save()
 
-    pass
+    # pass
+
 # 从起始到终止产生相同时间的航班到数据库中。
 #从道理来讲，航班也总会有停止运行的时间
 # 如果未来设置航班总需要这个东西。为了保证航班号作为逐主键存在于数据库中
