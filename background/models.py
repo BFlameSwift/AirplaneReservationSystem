@@ -65,6 +65,8 @@ class Concrete_flight(models.Model):
 class Order(models.Model):
     order_number = models.AutoField(primary_key=True,verbose_name = "订单编号")
     flight = models.ForeignKey(Flight,verbose_name="航班",on_delete=models.CASCADE)
+    # flight_date = models.DateField(verbose_name="航班飞行日期")
+    flight_datetime = models.DateTimeField(verbose_name="航班飞行具体时间")
     user = models.ForeignKey(User,verbose_name="用户",on_delete=models.CASCADE)
     price = models.FloatField(verbose_name="机票价格")
     order_time = models.DateTimeField(auto_now_add=True,verbose_name="订单创建时间")

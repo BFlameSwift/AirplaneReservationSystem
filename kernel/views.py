@@ -11,7 +11,7 @@ import time
 
 import background.models
 from . import forms
-from background.models import Flight,Order
+from background.models import Flight,Order,Concrete_flight
 from login.models import User
 from .pays import get_pay
 
@@ -72,16 +72,22 @@ def book_ticket(request):
 
         money = float(request.POST.get('money'))
         flight_number = request.POST.get('flight_number')
+        date_str = str(request.POST.get('datetime'))
+        year,mouth,day = map(int,date_str.split('-'))
+        date = datetime.date(year,mouth,day)
+
         print(money,flight_number)
         try:
             flight = Flight.objects.get(flight_number = flight_number)
+            concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=datetime_str)
             if user.balance < money:
-                message = '余额不足，请充值，或请您选择是否支付宝付全款'
+                # message = '余额不足，请充值，或请您选择是否支付宝付全款'
+                message = '余额不足，请使用支付宝充值'
                 # TODO 选择
-
                 return render(request, 'book_ticket.html', locals()) # 此时应还有个充值按钮
+
             # 所以这里使用函数来支付，因为当上面选择支付宝支付的时候也是成功支付了
-            pay_ticket(user,flight,money)
+            pay_ticket(user,flight,date,money)
             message = '支付成功'
             print(message)
             return render(request, 'book_ticket.html', locals())
@@ -106,7 +112,7 @@ def cancel_ticket(request):
         flight_number = request.POST.get('flight_number')
         try:
             flight = Flight.objects.get(flight_number=flight_number)
-
+            concrete_flight = Concrete_flight.objects.get(flight=flight,)
 
             # return render(request, 'cancel_ticket.html', locals())
             order = Order.objects.get(flight=flight)
@@ -127,7 +133,9 @@ def cancel_ticket(request):
         except Order.DoesNotExist:
             message = '订单不存在，请重新输入'
             return render(request, 'cancel_ticket.html', locals())
-
+        except Concrete_flight.DoesNotExist:
+            message = '当天该航班并不直飞，请重新输入'
+            return render(request, 'cancel_ticket.html', locals())
     else:
         return render(request, 'cancel_ticket.html', locals())
 
@@ -139,15 +147,23 @@ def cancel_ticket(request):
 
          # 航班信息不符合，按道理应该是不存在的
 
-def pay_ticket(user,flight,money,pay_type = False,luggage_weight = 0):
+def pay_ticket(user,flight,date,money,luggage_weight = 0):
     # pay_type = False : 使用余额支付， 否则支付宝支付 余额支付需要扣除用户余额
+    # 还是取消这个设置了，打算用支付宝实现充值就可以了，
+    # 这样做反而更麻烦了：加上pay_type对使用支付宝还是余额支付。再说倒也可以
+    contrete_time = datetime.datetime()
+    contrete_time.date = date
+    contrete_time.time = flight.flight_time
 
-
-    flight.book_sum += 1
+    contrete_flight = Concrete_flight.objects.get(flight_datetime=contrete_time,flight=flight)
+    contrete_flight.book_sum += 1
+    # flight.book_sum += 1 # 修改
     order = background.models.Order()
-    order.seat_number = flight.book_sum
-    order.user_id = user.id
-    order.flight_number = flight.flight_number
+    # order.seat_number = flight.book_sum
+    order.seat_number = contrete_flight.book_sum
+    # 有问题，如果有人中途退票了就不能这么放了可能会出现相同的座位号
+    order.user = user 
+    order.flight = flight
     order.order_time = datetime.datetime.now()
     order.flight_type = get_flight_type(money,flight)
     order.price = money
@@ -157,15 +173,15 @@ def pay_ticket(user,flight,money,pay_type = False,luggage_weight = 0):
     if luggage_weight >20:
         money += 18 *(luggage_weight-20)
 
-    if not pay_type:
-        user.balance -= float(money)
 
-    if pay_type:
-        pass  # TODO 与支付宝对接输入金额
 
+    # if pay_type:
+    #     pass  # TODO 与支付宝对接输入金额
+    user.balance -= float(money)
     user.total_consumption += money
     user.save()
-    flight.save()
+    # flight.save()
+    contrete_flight.save()
     order.save()
 
 def get_flight_type(money,flight):
@@ -178,8 +194,8 @@ def get_flight_type(money,flight):
     elif money == flight.economy_class_price:
         return '4'
     else :
-        return '4'
-
+        return '4'# 不可能出现的情况，保险起见默认设置成经济舱。
+    # 只要不出bug hhh
 
 
 

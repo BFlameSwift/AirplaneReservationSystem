@@ -185,7 +185,7 @@ def setting_new_flight(request):
                 return render(request, 'produce_flight.html', locals())
             # produce_flight_from_date_to_date()
         else:
-            message = '请检查输入日期格式是否正确'
+            message = '请以2021-01-01的格式输入日期'
             return render(request, 'produce_flight.html', locals())
 
     else:
