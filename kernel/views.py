@@ -128,7 +128,6 @@ def cancel_ticket(request):
             message = '订单不存在，请重新输入'
             return render(request, 'cancel_ticket.html', locals())
 
-
     else:
         return render(request, 'cancel_ticket.html', locals())
 
@@ -147,8 +146,8 @@ def pay_ticket(user,flight,money,pay_type = False,luggage_weight = 0):
     flight.book_sum += 1
     order = background.models.Order()
     order.seat_number = flight.book_sum
-    order.user = user
-    order.flight = flight
+    order.user_id = user.id
+    order.flight_number = flight.flight_number
     order.order_time = datetime.datetime.now()
     order.flight_type = get_flight_type(money,flight)
     order.price = money

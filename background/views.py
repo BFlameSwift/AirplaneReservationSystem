@@ -160,15 +160,50 @@ def delete_flight(request):
         # return JsonResponse({'message': message})
         return render(request, 'flight/delete_flight.html', locals())
 
+def setting_new_flight(request):
+    if request.method == 'POST':
+        start_stop_date_form = forms.StartStopDateForm(request.POST)
+        if start_stop_date_form.is_valid():
+            start_date_str = start_stop_date_form.cleaned_data.get('starting_date')
+            end_date_str = start_stop_date_form.cleaned_data.get('ending_date')
+            flight_number = start_stop_date_form.cleaned_data.get('flight_number')
+            start_date_str = str(start_date_str)
+            end_date_str = str(end_date_str)
+            year1,mouth1,day1 = map(int, start_date_str.split('-'))
+            year2,mouth2,day2 = map(int, end_date_str.split('-'))
+            start_date = datetime.date(year1,mouth1,day1)
+            end_date =  datetime.date(year2,mouth2,day2)
+
+            try:
+                flight = Flight.objects.get(flight_number = flight_number)
+                produce_flight_from_date_to_date(flight,start_date,end_date)
+                message = '产生航班成功'
+                return render(request, 'produce_flight.html', locals())
+
+            except Flight.DoesNotExist:
+                message = '航班不存在，请重新输入'
+                return render(request, 'produce_flight.html', locals())
+            # produce_flight_from_date_to_date()
+        else:
+            message = '请检查输入日期格式是否正确'
+            return render(request, 'produce_flight.html', locals())
+
+    else:
+        return render(request,'produce_flight.html',locals())
+
 
 def produce_flight_from_date_to_date(flight,start,end):
-    start = datetime.date(start)
-    end = datetime.date(end)
-    days = int(end.day - start.day)
+
+    print(start)
+    print(end)
+    days = (end-start).days
+    print(days)
     for i in range(days):
+
         date = datetime.date
         xday = datetime.timedelta(days=i)
         date = start + xday
+        print(date)
         # date.day = date.day+int(i)
         new_flight = models.Concrete_flight()
         new_flight.flight = flight

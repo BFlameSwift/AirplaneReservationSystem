@@ -19,7 +19,7 @@ from django.urls import path
 import kernel.views
 from login import views
 from background.views import entry_flight
-from background.views import delete_flight
+from background.views import delete_flight,setting_new_flight
 from kernel.views import *
 from django.urls import include
 
@@ -35,6 +35,7 @@ urlpatterns = [
     path('confirm/', views.user_confirm),
     path('background/entry_flight/',entry_flight),
     path('background/delete_flight/',delete_flight),
+    path('background/produce_flight/',setting_new_flight),
 
     path('query_flight/',query_flight),
 

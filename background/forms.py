@@ -25,7 +25,6 @@ class FlightrForm(forms.Form):
     destination = forms.CharField(max_length=30,label="目的地", widget=forms.TextInput(attrs={'class': 'form-control'}))
     starting_time = forms.TimeField(label="始发时间",widget=forms.TimeInput(attrs={'class': 'form-control'}))
 
-
     departure_airport = forms.CharField(max_length=64, label="始发机场", widget=forms.TextInput(attrs={'class': 'form-control'}))
     landing_airport = forms.CharField(max_length=64, label="目的机场", widget=forms.TextInput(attrs={'class': 'form-control'}))
     arrival_time = forms.TimeField(label="到达时间",widget=forms.TimeInput(attrs={'class': 'form-control'}))
@@ -34,7 +33,10 @@ class FlightrForm(forms.Form):
     business_class_price = forms.FloatField(label="商务舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
     economy_class_price = forms.FloatField(label="经济舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
-
+class StartStopDateForm(forms.Form):
+    starting_date = forms.DateField(label="始发日期", widget=forms.DateInput(attrs={'class': 'form-control'}))
+    ending_date = forms.DateField(label="终止日期", widget=forms.DateInput(attrs={'class': 'form-control'}))
+    flight_number = forms.CharField(max_length=30, label="航班号", widget=forms.TextInput(attrs={'class': 'form-control'}))
     # book_sum = forms.IntegerField(label="订票总数")
     # plane_capacity = forms.IntegerField(label="飞机容量")
 class flight_number_Form(forms.Form):
