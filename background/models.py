@@ -67,7 +67,8 @@ class Concrete_flight(models.Model):
     plane_capacity = models.IntegerField(verbose_name="飞机容量", blank=True) # 冗余列，方便起见
     flight_datetime = models.DateTimeField(verbose_name="航班时间")
     # seat_chart = models.ForeignKey(FlightSeatingChart,on_delete=models.CASCADE,verbose_name="座位表",)
-
+    class Meta:
+        verbose_name ='具体航班'
     # 利用
 class FlightSeatingChart(models.Model):
     # 座位表，每一天的每一个航班都有一个，否则数组比较难实现，
@@ -77,7 +78,8 @@ class FlightSeatingChart(models.Model):
     concrete_flight = models.ForeignKey(Concrete_flight,verbose_name="具体航班",on_delete=models.CASCADE)
     # user = models.ForeignKey(User,verbose_name="用户",on_delete=models.CASCADE)
     is_occupied = models.BooleanField(default=False,verbose_name="该座位是否被占用")
-
+    class Meta:
+        verbose_name ='航班座位表'
 
 class Order(models.Model):
     order_number = models.AutoField(primary_key=True,verbose_name = "订单编号")
@@ -105,6 +107,9 @@ class Order(models.Model):
         # default='经济舱',
         verbose_name="舱位类型",
     )
+    class Meta:
+        verbose_name ='订单'
+        verbose_name_plural = '订单信息'
 
     # class Meta:
         # da_table = 'order'

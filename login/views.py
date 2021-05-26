@@ -12,7 +12,9 @@ from django.forms.models import model_to_dict
 
 import background.models
 from . import forms
+from .models import *
 from . import models
+from background.models import *
 
 from django.conf import settings
 
@@ -32,20 +34,29 @@ def index(request): # 个人中心，
     if not request.session.get('is_login',None):
         return redirect('/login/')
     username = request.session.get('user_name')
-    user = models.User.objects.get(name = username)
+    user = User.objects.get(name = username)
     user_dict = model_to_dict(user)
     # 应该可以通过user.''来访问
     # print(json.dumps(user))
     # print(user_value)
     try:
-        order = background.models.Order.objects.get()
-
-    except background.models.Order.DoesNotExist:
+        # orders = Order.objects.filter(user=user).all()
+        # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
+        #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
+        #                                          'seat_number','order_is_valid','luggage_weight','flight_type'))
+        orders = serializers.serialize('xml', Order.objects.filter(user=user).all(),)
+        # 只能打印出来，当然最终应使用第一种查询方法
+    except Order.DoesNotExist:
         message = '订单不存在'
-        return JsonResponse({'message':message})
+        return JsonResponse({'message':message,'user_dict':user_dict})
     # data = serializers.serialize('xml',models.User.objects.all(),fileds = ('name','password'))
     # List = list(flight_list)
-    return JsonResponse(json.dumps({'user':user_dict,'order':model_to_dict(order)},cls=DjangoJSONEncoder),safe=False)
+    # print(model_to_dict(orders))
+    # order = Order()
+    # for order in orders:
+    #     print(order)
+    # print(orders)
+    return JsonResponse(json.dumps({'user':user_dict,'orders':orders},cls=DjangoJSONEncoder),safe=False)
     # return render(request, 'login/index.html')
 
 def  change_information(request):

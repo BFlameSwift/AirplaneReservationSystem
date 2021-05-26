@@ -1,6 +1,6 @@
 import datetime
 
-from django.db.models import Min,Count
+from django.db.models import Min, Count, Max
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
@@ -62,6 +62,8 @@ def query_flight(request):
 def book_ticket(request):
 
 #TODO 新建订单是如果要预订的机票的飞行时间中已经订过冲突航班了就提示
+# 不能同一个人选择同一时间的同一航班 Done
+# Done 测试信用评价成功
 
     if not request.session.get('is_login', None):
         message = '您尚未登录'
@@ -81,13 +83,27 @@ def book_ticket(request):
         year,mouth,day = map(int,date_str.split('-'))
         date = datetime.date(year,mouth,day)
 
+
         print(money,flight_number,date)
         try:
             flight = Flight.objects.get(flight_number = flight_number)
-            the_datetime = datetime.datetime()
-            the_datetime.date = date
-            the_datetime.time = flight.flight_time
+
+            the_datetime = datetime.datetime(
+                date.year,date.month,date.day,
+                flight.flight_time.hour,flight.flight_time.minute,flight.flight_time.second
+            )
+            # the_datetime.date = date
+            # the_datetime.time = flight.flight_time
             concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
+            # 同一个人不能买一个机票两次
+            try:
+                order = Order.objects.get(user=user,flight_datetime=the_datetime,order_is_valid=True)
+                message = '您已经预订过本次航班，请勿重复订购'
+                return render(request, 'book_ticket.html', locals())
+            except:
+                pass# 找不到就对了，
+
+
             if user.balance < money:
                 # message = '余额不足，请充值，或请您选择是否支付宝付全款'
                 message = '余额不足，请使用支付宝充值'
@@ -110,6 +126,7 @@ def book_ticket(request):
 
 @csrf_exempt
 def cancel_ticket(request):
+# TODO 计划应该是前端传过来必定有的订单来退订，所以不必设置无法退订不存在的订单
     if not request.session.get('is_login', None):
         message = '您尚未登录'
         return redirect('/login/')
@@ -118,9 +135,17 @@ def cancel_ticket(request):
         user = User.objects.get(name=username)
         user_dict = model_to_dict(user)
         flight_number = request.POST.get('flight_number')
+        date_str = str(request.POST.get('date'))
+        year, mouth, day = map(int, date_str.split('-'))
+        date = datetime.date(year, mouth, day)
+
         try:
             flight = Flight.objects.get(flight_number=flight_number)
-            concrete_flight = Concrete_flight.objects.get(flight=flight,)
+            the_datetime = datetime.datetime(
+                date.year, date.month, date.day,
+                flight.flight_time.hour, flight.flight_time.minute, flight.flight_time.second
+            )
+            concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
 
             # return render(request, 'cancel_ticket.html', locals())
             order = Order.objects.get(flight=flight,flight_datetime=concrete_flight.flight_datetime,user=user)
@@ -135,7 +160,7 @@ def cancel_ticket(request):
             seat.is_occupied = False
 
             # TODO 不知道是不是欠考虑了什么
-
+            setting_credit(user) # 更新信用
             user.save()
             concrete_flight.save()
             order.save()
@@ -169,9 +194,12 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0):
     # pay_type = False : 使用余额支付， 否则支付宝支付 余额支付需要扣除用户余额
     # 还是取消这个设置了，打算用支付宝实现充值就可以了，
     # 这样做反而更麻烦了：加上pay_type对使用支付宝还是余额支付。再说倒也可以
-    contrete_time = datetime.datetime()
-    contrete_time.date = date
-    contrete_time.time = flight.flight_time
+    contrete_time = datetime.datetime(
+        date.year, date.month, date.day,
+        flight.flight_time.hour, flight.flight_time.minute, flight.flight_time.second
+    )
+    # contrete_time.date = date
+    # contrete_time.time = flight.flight_time
 
     contrete_flight = Concrete_flight.objects.get(flight_datetime=contrete_time,flight=flight)
     contrete_flight.book_sum += 1
@@ -181,13 +209,21 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0):
     # 选座
     new_seat = FlightSeatingChart()
     try:
-        min_spare_seat = FlightSeatingChart.objects.filter(is_occupied=False,concrete_flight=contrete_flight).aggregate(Min('seat_number'))
-
+        min_spare_seat_dict = FlightSeatingChart.objects.filter(is_occupied=False,concrete_flight=contrete_flight).aggregate(Min('seat_number'))
+        print('in try' )
+        min_spare_seat = min_spare_seat_dict.get('seat_number__min')
+        if min_spare_seat == None:
+            min_spare_seat = int(1)
     except:
-        pass
-        max_occupied_seat = FlightSeatingChart.objects.filter(is_occupied=True,concrete_flight=contrete_flight).aggregate(Min('seat_number'))
+        max_occupied_seat_dict = FlightSeatingChart.objects.filter(is_occupied=True,concrete_flight=contrete_flight).aggregate(Max('seat_number'))
+
+        if max_occupied_seat_dict.get('seat_number__max') == None:
+            max_occupied_seat = int(0)
+        max_occupied_seat = int(max_occupied_seat_dict.get('seat_number__max'))
+        print('in except')
         min_spare_seat = max_occupied_seat + 1
-    order.seat_number = min_spare_seat
+    print('seat',min_spare_seat)
+    order.seat_number = int(min_spare_seat)
     # 保存新座位
     new_seat.seat_number = min_spare_seat
     new_seat.is_occupied = True
