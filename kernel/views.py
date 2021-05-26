@@ -272,24 +272,30 @@ def get_flight_type(money,flight):
 @csrf_exempt
 def paysView(request):
     if request.method == 'POST':
+        if not request.session.get('is_login', None):
+            return redirect('/login/')
         # money_form= moneyForm(request.POST)
         # if money_form.is_valid():
         #     total = money_form.cleaned_data.get('money')
+        username = request.session.get('user_name')
+        user = User.objects.get(name=username)
+
         total = int(request.POST.get('money'))
         if total:
             out_trade_no = str(int(time.time()))
             # payInfo = dict(price=total, user_id=request.user.id, state='已支付')
             # request.session['payInfo'] = payInfo # 前段传送逐id 和时间
             # request.session['payTime'] = out_trade_no
-
-            return_url = 'http://' + request.get_host() + '/shopper.html'# 支付成功后的返回地址，
+            user.balance += total
+            user.save()
+            return_url = 'http://' + request.get_host() + '.html'# 支付成功后的返回地址，
             url = get_pay(out_trade_no, total, return_url)
             return redirect(url)
 
         else:
             return JsonResponse({'message': '订单金额不正确'})
     else:
-        return render(request, 'book_ticket.html', locals())
+        return render(request, 'pay.html', locals())
         # return JsonResponse({'message': '你的请求不是POST'})
         # return redirect('shopper:shopcart')# TODO ###
 

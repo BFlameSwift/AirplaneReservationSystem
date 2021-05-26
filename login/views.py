@@ -29,6 +29,7 @@ def hash_code(s, salt='bflame'):
     return h.hexdigest()
 
 
+
 def index(request): # 个人中心，
     # 向前端传送个人的全部信息和个人的全部订单
     if not request.session.get('is_login',None):
