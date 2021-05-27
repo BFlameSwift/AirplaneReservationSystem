@@ -10,10 +10,9 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 
-import background.models
 from . import forms
 from .models import *
-from . import models
+# from . import
 from background.models import *
 
 from django.conf import settings
@@ -40,8 +39,10 @@ def index(request): # 个人中心，
     # 应该可以通过user.''来访问
     # print(json.dumps(user))
     # print(user_value)
+
     try:
         # orders = Order.objects.filter(user=user).all()
+        # orders_dict = model_to_dict(orders)
         # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
         #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
         #                                          'seat_number','order_is_valid','luggage_weight','flight_type'))
@@ -50,7 +51,7 @@ def index(request): # 个人中心，
     except Order.DoesNotExist:
         message = '订单不存在'
         return JsonResponse({'message':message,'user_dict':user_dict})
-    # data = serializers.serialize('xml',models.User.objects.all(),fileds = ('name','password'))
+    # data = serializers.serialize('xml',User.objects.all(),fileds = ('name','password'))
     # List = list(flight_list)
     # print(model_to_dict(orders))
     # order = Order()
@@ -76,10 +77,12 @@ def login(request):
         if login_form.is_valid():
             username = login_form.cleaned_data.get('username')
             password = login_form.cleaned_data.get('password')
-
+            user = User.objects.get(name=username)
             try:
-                user = models.User.objects.get(name=username)
-            except :
+                user = User.objects.get(name=username)
+                # user = User.ob
+            except  :
+                # print(e)
                 message = '用户不存在！'
                 # return JsonResponse(response[2])
                 return render(request, 'login/login.html', locals())
@@ -127,20 +130,20 @@ def register(request):
                 message = '两次输入的密码不同！'
                 return render(request, 'login/register.html', locals())
             else:
-                same_name_user = models.User.objects.filter(name=username)
+                same_name_user = User.objects.filter(name=username)
                 if same_name_user:
                     message = '用户名已经存在'
                     return render(request, 'login/register.html', locals())
-                same_email_user = models.User.objects.filter(email=email)
+                same_email_user = User.objects.filter(email=email)
                 if same_email_user:
                     message = '该邮箱已经被注册了！'
                     return render(request, 'login/register.html', locals())
-                same_id_number_user = models.User.objects.filter(Id_number = Id_number)
+                same_id_number_user = User.objects.filter(Id_number = Id_number)
                 if same_id_number_user:
                     message = '相同的身份证号已经存在'
                     return render(request, 'login/register.html', locals())
 
-                new_user = models.User()
+                new_user = User()
                 new_user.name = username
                 new_user.password = password1
                 new_user.email = email
@@ -169,13 +172,14 @@ def logout(request):
 def make_confirm_string(user):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     code = hash_code(user.name, now)
-    models.ConfirmString.objects.create(code=code, user=user,)
+    ConfirmString.objects.create(code=code, user=user,)
     return code
 def user_confirm(request):
     code = request.GET.get('code', None)
     message = ''
     try:
-        confirm = models.ConfirmString.objects.get(code=code)
+
+        confirm = ConfirmString.objects.get(code=code)
     except:
         message = '无效的确认请求!'
         return render(request, 'login/confirm.html', locals())

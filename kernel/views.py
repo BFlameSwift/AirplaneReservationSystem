@@ -58,13 +58,14 @@ def query_flight(request):
     return render(request,'list_employee.html',locals())
 # @csrf_exempt
 # def query_order(request):
+
 @csrf_exempt
 def book_ticket(request):
 
 #TODO 新建订单是如果要预订的机票的飞行时间中已经订过冲突航班了就提示
 # 不能同一个人选择同一时间的同一航班 Done
 # Done 测试信用评价成功
-
+# TODO 高信用等级打折
     if not request.session.get('is_login', None):
         message = '您尚未登录'
         return redirect('/login/')
@@ -100,7 +101,7 @@ def book_ticket(request):
                 order = Order.objects.get(user=user,flight_datetime=the_datetime,order_is_valid=True)
                 message = '您已经预订过本次航班，请勿重复订购'
                 return render(request, 'book_ticket.html', locals())
-            except:
+            except :
                 pass# 找不到就对了，
 
 
@@ -208,21 +209,36 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0):
     # order.seat_number = flight.book_sum
     # 选座
     new_seat = FlightSeatingChart()
-    try:
-        min_spare_seat_dict = FlightSeatingChart.objects.filter(is_occupied=False,concrete_flight=contrete_flight).aggregate(Min('seat_number'))
-        print('in try' )
-        min_spare_seat = min_spare_seat_dict.get('seat_number__min')
-        if min_spare_seat == None:
-            min_spare_seat = int(1)
-    except:
-        max_occupied_seat_dict = FlightSeatingChart.objects.filter(is_occupied=True,concrete_flight=contrete_flight).aggregate(Max('seat_number'))
 
-        if max_occupied_seat_dict.get('seat_number__max') == None:
-            max_occupied_seat = int(0)
-        max_occupied_seat = int(max_occupied_seat_dict.get('seat_number__max'))
+    seat_num = 0
+    try:
+        for seat_num in range(flight.plane_capacity):
+            print(seat_num)
+            min_spare_seat_object = FlightSeatingChart.objects.get(is_occupied=True,concrete_flight=contrete_flight,seat_number=int(seat_num)+1)
+            print(min_spare_seat_object)
+            if min_spare_seat_object is None:
+                min_spare_seat = seat_num+1
+                break
+            # min_spare_seat = min_spare_seat_dict.get('seat_number__min')
+            # if min_spare_seat is None:
+            #     min_spare_seat = int(seat_num)
+            #     break
+        # min_spare_seat_dict = FlightSeatingChart.objects.filter(is_occupied=False,concrete_flight=contrete_flight).aggregate(Min('seat_number'))
+        #
+        print('in try')
+        # min_spare_    seat = min_spare_seat_dict.get('seat_number__min')
+        # if min_spare_seat == None:
+        #     min_spare_seat = int(1)
+    except:
+
+        min_spare_seat = seat_num + 1
+        # max_occupied_seat_dict = FlightSeatingChart.objects.filter(is_occupied=True,concrete_flight=contrete_flight).aggregate(Max('seat_number'))
+        # if max_occupied_seat_dict.get('seat_number__max') is None:
+        #     max_occupied_seat = int(0)
+        # max_occupied_seat = int(max_occupied_seat_dict.get('seat_number__max'))
         print('in except')
-        min_spare_seat = max_occupied_seat + 1
-    print('seat',min_spare_seat)
+        # min_spare_seat = max_occupied_seat + 1
+    print('seat', min_spare_seat)
     order.seat_number = int(min_spare_seat)
     # 保存新座位
     new_seat.seat_number = min_spare_seat
