@@ -148,7 +148,7 @@ def cancel_ticket(request):
             concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
 
             # return render(request, 'cancel_ticket.html', locals())
-            order = Order.objects.get(flight=flight,flight_datetime=concrete_flight.flight_datetime,user=user)
+            order = Order.objects.get(flight=flight,flight_datetime=concrete_flight.flight_datetime,user=user,order_is_valid=True)
 
             order.order_is_valid = False
             concrete_flight.book_sum -= 1
@@ -156,7 +156,7 @@ def cancel_ticket(request):
             user.balance += order.price
             user.total_consumption -= order.price
             #座位设置成False
-            seat = FlightSeatingChart.objects.get(concrete_flight=concrete_flight,seat_number=order.seat_number)
+            seat = FlightSeatingChart.objects.get(concrete_flight=concrete_flight,seat_number=order.seat_number,is_occupied=True)
             seat.is_occupied = False
 
             # TODO 不知道是不是欠考虑了什么
