@@ -96,6 +96,8 @@ def book_ticket(request):
             # the_datetime.date = date
             # the_datetime.time = flight.flight_time
             concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
+
+
             # 同一个人不能买一个机票两次
             try:
                 order = Order.objects.get(user=user,flight_datetime=the_datetime,order_is_valid=True)
@@ -103,7 +105,9 @@ def book_ticket(request):
                 return render(request, 'book_ticket.html', locals())
             except :
                 pass# 找不到就对了，
-
+            if concrete_flight.book_sum >= concrete_flight.plane_capacity:
+                message = '航班已满，请乘坐其他航班'
+                return render(request, 'book_ticket.html', locals())
 
             if user.balance < money:
                 # message = '余额不足，请充值，或请您选择是否支付宝付全款'
@@ -191,10 +195,11 @@ def cancel_ticket(request):
 
          # 航班信息不符合，按道理应该是不存在的
 
-def pay_ticket(user,flight,date,money,luggage_weight = 0):
+def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
     # pay_type = False : 使用余额支付， 否则支付宝支付 余额支付需要扣除用户余额
     # 还是取消这个设置了，打算用支付宝实现充值就可以了，
     # 这样做反而更麻烦了：加上pay_type对使用支付宝还是余额支付。再说倒也可以
+    # seatNumber 默认是-1 如果传进来参数就是自己选座，否则自动分配座位
     contrete_time = datetime.datetime(
         date.year, date.month, date.day,
         flight.flight_time.hour, flight.flight_time.minute, flight.flight_time.second
@@ -209,34 +214,34 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0):
     # order.seat_number = flight.book_sum
     # 选座
     new_seat = FlightSeatingChart()
+    if seatNumber == -1:
+        seat_num = 0
+        try:
+            for seat_num in range(flight.plane_capacity):
+                print(seat_num)
+                min_spare_seat_object = FlightSeatingChart.objects.get(is_occupied=True,concrete_flight=contrete_flight,seat_number=int(seat_num)+1)
+                print(min_spare_seat_object)
+                if min_spare_seat_object is None:
+                    min_spare_seat = seat_num+1
+                    break
+                # min_spare_seat = min_spare_seat_dict.get('seat_number__min')
+                # if min_spare_seat is None:
+                #     min_spare_seat = int(seat_num)
+                #     break
+            # min_spare_seat_dict = FlightSeatingChart.objects.filter(is_occupied=False,concrete_flight=contrete_flight).aggregate(Min('seat_number'))
+            #
+            print('in try')
 
-    seat_num = 0
-    try:
-        for seat_num in range(flight.plane_capacity):
-            print(seat_num)
-            min_spare_seat_object = FlightSeatingChart.objects.get(is_occupied=True,concrete_flight=contrete_flight,seat_number=int(seat_num)+1)
-            print(min_spare_seat_object)
-            if min_spare_seat_object is None:
-                min_spare_seat = seat_num+1
-                break
-            # min_spare_seat = min_spare_seat_dict.get('seat_number__min')
-            # if min_spare_seat is None:
-            #     min_spare_seat = int(seat_num)
-            #     break
-        # min_spare_seat_dict = FlightSeatingChart.objects.filter(is_occupied=False,concrete_flight=contrete_flight).aggregate(Min('seat_number'))
-        #
-        print('in try')
-        # min_spare_    seat = min_spare_seat_dict.get('seat_number__min')
-        # if min_spare_seat == None:
-        #     min_spare_seat = int(1)
-    except:
+        except:
 
-        min_spare_seat = seat_num + 1
-        # max_occupied_seat_dict = FlightSeatingChart.objects.filter(is_occupied=True,concrete_flight=contrete_flight).aggregate(Max('seat_number'))
-        # if max_occupied_seat_dict.get('seat_number__max') is None:
-        #     max_occupied_seat = int(0)
-        # max_occupied_seat = int(max_occupied_seat_dict.get('seat_number__max'))
-        print('in except')
+            min_spare_seat = seat_num + 1
+            # max_occupied_seat_dict = FlightSeatingChart.objects.filter(is_occupied=True,concrete_flight=contrete_flight).aggregate(Max('seat_number'))
+            # if max_occupied_seat_dict.get('seat_number__max') is None:
+            #     max_occupied_seat = int(0)
+            # max_occupied_seat = int(max_occupied_seat_dict.get('seat_number__max'))
+            print('in except')
+    else:
+        min_spare_seat = seatNumber
         # min_spare_seat = max_occupied_seat + 1
     print('seat', min_spare_seat)
     order.seat_number = int(min_spare_seat)
@@ -252,18 +257,23 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0):
     order.order_time = datetime.datetime.now()
     order.flight_datetime = contrete_time
     order.flight_type = get_flight_type(money,flight)
-    order.price = money
+
     order.order_is_valid = True
     order.luggage_weight = luggage_weight
     # TODO 根据行李重量增加钱，应该至少在get_flight_type 后判断，否则加了钱就不能按照钱来找对应的航班了
     if luggage_weight >20:
         money += 18 *(luggage_weight-20)# 亲测大兴机场价格
-
-
-
+    money = float(money)
+    if user.credit_rating == '5':# AAA等级至尊用户
+        money *= 0.75
+    elif user.credit_rating == '4':# AA等级还行用户
+        money *=0.9
+    elif user.credit_rating == '3': #A级普通用户
+        money *= 0.99
+    order.price = money
     # if pay_type:
     #     pass  # TODO 与支付宝对接输入金额
-    user.balance -= float(money)
+    user.balance -= money
     user.total_consumption += money
     user.save()
     # flight.save()

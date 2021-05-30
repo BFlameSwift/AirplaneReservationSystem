@@ -39,18 +39,26 @@ def index(request): # 个人中心，
     # 应该可以通过user.''来访问
     # print(json.dumps(user))
     # print(user_value)
-
+    response = {}
+    response['user'] = user_dict
     try:
-        # orders = Order.objects.filter(user=user).all()
+        orders = Order.objects.filter(user=user).all()
         # orders_dict = model_to_dict(orders)
         # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
         #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
         #                                          'seat_number','order_is_valid','luggage_weight','flight_type'))
-        orders = serializers.serialize('xml', Order.objects.filter(user=user).all(),)
+        # orders = serializers.serialize('xml', Order.objects.filter(user=user).all(),)
         # 只能打印出来，当然最终应使用第一种查询方法
     except Order.DoesNotExist:
         message = '订单不存在'
-        return JsonResponse({'message':message,'user_dict':user_dict})
+        response['msg'] = '订单不存在'
+        response['error'] = 1
+        # response[]
+        return JsonResponse(response)
+        # return JsonResponse({'message':message,'user_dict':user_dict})
+    except Exception as e:
+        response['error'] = 2
+        response['msg'] = str(e)
     # data = serializers.serialize('xml',User.objects.all(),fileds = ('name','password'))
     # List = list(flight_list)
     # print(model_to_dict(orders))
@@ -58,7 +66,11 @@ def index(request): # 个人中心，
     # for order in orders:
     #     print(order)
     # print(orders)
-    return JsonResponse(json.dumps({'user':user_dict,'orders':orders},cls=DjangoJSONEncoder),safe=False)
+    response['orders'] = json.loads(serializers.serialize("json",orders))
+    response['user'] = model_to_dict(user)
+    response['error'] = 0
+    return JsonResponse(response)
+    # return JsonResponse(json.dumps({'user':user_dict,'orders':orders},cls=DjangoJSONEncoder),safe=False)
     # return render(request, 'login/index.html')
 
 def  change_information(request):
@@ -68,12 +80,12 @@ def  change_information(request):
 # postman 使用x-www-form-urlencoded模式即可
 @csrf_exempt
 def login(request):
-
+    response = {}
     if request.session.get('is_login', None):  # 不允许重复登录
         return redirect('/index/')
     if request.method == 'POST':
         login_form = forms.UserForm(request.POST)
-        message = '请检查填写的内容！'
+        message = response['msg'] = '请检查填写的内容！'
         if login_form.is_valid():
             username = login_form.cleaned_data.get('username')
             password = login_form.cleaned_data.get('password')
@@ -83,12 +95,12 @@ def login(request):
                 # user = User.ob
             except  :
                 # print(e)
-                message = '用户不存在！'
+                message = response['msg'] = '用户不存在！'
                 # return JsonResponse(response[2])
                 return render(request, 'login/login.html', locals())
 
             if not user.has_confirmed:
-                message = '该用户还未经过邮件确认！'
+                message = response['msg'] = '该用户还未经过邮件确认'
                 # return JsonResponse(response[4])
                 return render(request, 'login/login.html', locals())
 
@@ -96,10 +108,14 @@ def login(request):
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.name
+                response['error'] = 0
+                message = response['msg'] = '登录成功'
+
                 # return JsonResponse(response[0])
                 return redirect('/index/')
             else:
-                message = '密码不正确！'
+
+                message = response['msg'] = '密码不正确！'
                 # return JsonResponse(response[3])
                 return render(request, 'login/login.html', locals())
         else:
@@ -206,12 +222,12 @@ def send_email(email, code):
 
     subject = '来自www.bflame.site的注册确认邮件'
 
-    text_content = '''感谢注册www.bflame.site ，这里是李彧的博客和教程站点，专注于摸鱼技术的分享！\
+    text_content = '''感谢注册www.bflame.site ，这里是飞机订票系统的注册邮件。\
                     如果你看到这条消息，说明你的邮箱服务器不提供HTML链接功能，请联系管理员！'''
 
     html_content = '''
                     <p>感谢注册<a href="http://{}/confirm/?code={}" target=blank>www.bflame.site</a>，\
-                    这里是李彧的博客和教程站点，专注于摸鱼技术的分享！</p>
+                    这里是飞机订票系统的站点，用于软件工程大作业课设！</p>
                     <p>请点击站点链接完成注册确认！</p>
                     <p>此链接有效期为{}天！</p>
                     '''.format('127.0.0.1:8000', code, settings.CONFIRM_DAYS)
