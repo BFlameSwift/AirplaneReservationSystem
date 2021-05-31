@@ -42,6 +42,8 @@ urlpatterns = [
     path('book_ticket/',kernel.views.book_ticket),
     path('cancel_ticket/',kernel.views.cancel_ticket),
 
-    path('pay/', kernel.views.paysView, name='pays')
+    path('pay/', kernel.views.paysView, name='pays'),
+
+    path('test_ajax/',include('test_ajax.urls'))
 
 ]

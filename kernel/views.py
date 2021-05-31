@@ -6,6 +6,7 @@ from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 # Create your views here.
+
 from django.http import JsonResponse
 import json
 import time
@@ -103,9 +104,12 @@ def book_ticket(request):
                 order = Order.objects.get(user=user,flight_datetime=the_datetime,order_is_valid=True)
                 message = '您已经预订过本次航班，请勿重复订购'
                 return render(request, 'book_ticket.html', locals())
-            except :
-                pass# 找不到就对了，
-            if concrete_flight.book_sum >= concrete_flight.plane_capacity:
+
+            except Exception as e:
+                pass
+                # 找不到订单就对了
+
+            if concrete_flight.book_sum >= concrete_flight.plane_capacity :
                 message = '航班已满，请乘坐其他航班'
                 return render(request, 'book_ticket.html', locals())
 
@@ -121,9 +125,12 @@ def book_ticket(request):
             print(message)
             return render(request, 'book_ticket.html', locals())
 
-        except Flight.DoesNotExist:# 航班不存在
-            message = '航班不存在， 请重新输入'
-            return render(request,'book_ticket.html',locals())
+        except Flight.DoesNotExist:
+            message = '航班不存在，请重新选择航班'
+            return render(request, 'book_ticket.html', locals())
+        except Concrete_flight.DoesNotExist:
+            message = '当天该航班并不直飞，请选择其他航班'
+            return render(request, 'book_ticket.html', locals())
 
 
     else:
