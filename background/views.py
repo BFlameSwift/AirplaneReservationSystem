@@ -15,6 +15,7 @@ def entry_flight(request):
     # if request.session.get('is_login',None):
     #     return redirect('/background/')
     if request.method == 'POST':
+        response = {}
         flight_form = forms.FlightrForm(request.POST)
         message = '请检查你的输入内容'
         if flight_form.is_valid():
@@ -27,60 +28,43 @@ def entry_flight(request):
             starting_time = flight_form.cleaned_data.get('starting_time')
             arrival_time = flight_form.cleaned_data.get('arrival_time')
             first_class_price = flight_form.cleaned_data.get('first_class_price')
-            highlevel_economy_class_price = flight_form.cleaned_data.get('highlevel_economy_class_price')
+            # highlevel_economy_class_price = flight_form.cleaned_data.get('highlevel_economy_class_price')
             business_class_price = flight_form.cleaned_data.get('business_class_price')
             economy_class_price = flight_form.cleaned_data.get('economy_class_price')
             plane_type = flight_form.cleaned_data.get('plane_type')
 
+
+
             message = '航班创建成功'
-            response = [
-                {
-                    'status_code':0,
-                    'message':message,
-                    'flight_number': flight_number,
-                    'origination ': origination,
-                    'destination': destination,
-                    'starting_time': starting_time,
-                    'arrival_time': arrival_time,
-                    'departure_airport':departure_airport,
-                    'landing_airport':landing_airport,
-                    'first_class_price':first_class_price,
-                    'economy_class_price':economy_class_price,
-                },
-                {
-                    'status_code':1,
-                    'message':'已存在相同航班，请先检查历史航班'
-                },{
-                    'status_code':2,
-                    'message':'航班号输入格式有误'
-                },{
-                    'status_code':3,
-                    'message':'该航班舱位价格等级不正确，请检查舱位价格输入，请保证头等舱价格最高、经济舱价格最低'
-                },{
-                    'status_code':4,
-                    'message':'起飞时间晚于降落时间，请检查输入'
-                }
-            ]
+
+
 
             try:
                 same_id_flight = models.Flight.objects.get(flight_number=flight_number)
+                response['status'] = 1
                 message = '已存在相同航班，请先检查历史航班'
-                return render(request, 'flight/entry_flight.html', locals())
+                return JsonResponse(response)
+                # return render(request, 'flight/entry_flight.html', locals())
 
             except :
                 if not check_flight_number(flight_number):
-                    message='航班号输入格式有误'
-                    return render(request, 'flight/entry_flight.html', locals())
+                    response['status'] = 2
+                    response['msg'] = message = '航班号输入格式有误'
+                    return JsonResponse(response)
+                    # return render(request, 'flight/entry_flight.html', locals())
                     # return JsonResponse(response[2])
 
-                if not (first_class_price > highlevel_economy_class_price and highlevel_economy_class_price > business_class_price and business_class_price > economy_class_price):
+                if not (first_class_price > business_class_price and business_class_price > economy_class_price):
+                    response['msg'] = response['status'] = 3
                     message='该航班舱位价格等级不正确，请检查舱位价格输入，请保证头等舱价格最高、经济舱价格最低'
-                    return render(request, 'flight/entry_flight.html', locals())
+                    return JsonResponse(response)
+                    # return render(request, 'flight/entry_flight.html', locals())
                     # return JsonResponse(response[3])
                 if starting_time > arrival_time:
-                    message='起飞时间晚于降落时间，请检查输入'
-                    return render(request, 'flight/entry_flight.html', locals())
-                    # return JsonResponse(response[4])
+                    response['status'] = 4
+                    response['msg'] = message='起飞时间晚于降落时间，请检查输入'
+                    # return render(request, 'flight/entry_flight.html', locals())
+                    return JsonResponse(response)
 
                 new_flight = models.Flight()
                 new_flight.plane_type = plane_type
@@ -90,7 +74,7 @@ def entry_flight(request):
                 new_flight.starting_time = starting_time
                 new_flight.arrival_time = arrival_time
                 new_flight.first_class_price = first_class_price
-                new_flight.highlevel_economy_class_price = highlevel_economy_class_price
+                # new_flight.highlevel_economy_class_price = highlevel_economy_class_price
                 new_flight.business_class_price = business_class_price
                 new_flight.economy_class_price = economy_class_price
                 new_flight.landing_airport = landing_airport
@@ -111,41 +95,50 @@ def entry_flight(request):
                 # new_flight.plane_capacity = 200# 根据飞机型号定制 完成
 
                 new_flight.save()
+                response['status'] = 0
+                response['msg'] = '航班创建成功'
                 # time_interval = arrival_time.timestamp() - starting_time.timestamp()
                 # print('time_interval'+time_interval)
                 # print(locals())
                 # print(new_flight.flight_time)
                 # return render(request,'flight/background.html',locals())
-                return render(request, 'flight/entry_flight.html', locals())
+                return JsonResponse(response)
+                # return render(request, 'flight/entry_flight.html', locals())
         else:
             # TODO 对输入信息逐个处理分别输出相应的错误信息
-            message = '请检查输入航班信息是否有效'
+            response['msg'] = message = '请检查输入航班信息是否有效'
+            response['status'] = 5
             flight_form = forms.FlightrForm()
-            return render(request, 'flight/entry_flight.html', locals())
+            return JsonResponse(response)
+            # return render(request, 'flight/entry_flight.html', locals())
     else:
         flight_form = forms.FlightrForm()
         return render(request, 'flight/entry_flight.html', locals())
-
+# TODO 非POST请求应该是第一次进入界面，上面的html待修改为某个地址
 @csrf_exempt
 def delete_flight(request):
+    response = {}
     if request.method == 'POST':
         flight_form = forms.flight_number_Form(request.POST)
-        message = '请检查输入的航班号码'
+
+        response['msg'] = message = '请检查输入的航班号码'
         if flight_form.is_valid():
             flight_num = flight_form.cleaned_data.get('flight_number')
             if not check_flight_number(flight_num):
-                message = '航班号格式错误，请重新输入'
+                response['msg'] = message = '航班号格式错误，请重新输入'
                 # return JsonResponse({'message': message, 'flight_number': flight_num})
                 return render(request, 'flight/delete_flight.html', locals())
             try:
                 flight = models.Flight.objects.get(flight_number = flight_num)
                 flight.delete()
-                message = '航班删除成功'
-                return render(request, 'flight/delete_flight.html', locals())
+                response['msg'] = message = '航班删除成功'
+                return JsonResponse(response)
+
+                # return render(request, 'flight/delete_flight.html', locals())
                 # return JsonResponse({'message': message, 'flight_number': flight_num})
             except:
 
-                message = '航班不存在，请重新输入'
+                response['msg'] = message = '航班不存在，请重新输入'
                 print(locals())
                 # return JsonResponse({'message':message,'flight_number':flight_num})
                 return render(request, 'flight/delete_flight.html', locals())
@@ -155,10 +148,11 @@ def delete_flight(request):
             return render(request, 'flight/delete_flight.html', locals())
 
     else:
-        message = '请检查输入航班号码'
+        # message = '请检查输入航班号码'
         flight_form = forms.flight_number_Form()
         # return JsonResponse({'message': message})
         return render(request, 'flight/delete_flight.html', locals())
+    # TODO 非POST请求应该是第一次进入界面，上面的html待修改为某个地址
 
 def setting_new_flight(request):
     if request.method == 'POST':

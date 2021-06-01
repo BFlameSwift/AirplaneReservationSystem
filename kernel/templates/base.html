@@ -32,14 +32,42 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <br> <br>
+
             {# 这个block块写继承页面个性的内容，即不同于母板的内容 #}
             {% block page_content %}
             {% endblock %}
 
         </div>
+
     </div>
     
 </div>
+<div class="container">
+            <div class="col">
+                <form class="form-query_flight" action="/query_flight/" method="post">
+
+
+                  {% csrf_token %}
+                  <h3 class="text-center">查询航班</h3>
+
+                  <div class="form-group">
+                    {{ query_flight_form.origination.label_tag }}
+                    {{ query_flight_form.origination }}
+                  </div>
+
+                  <div class="form-group">
+                    {{ query_flight_form.destination.label_tag }}
+                    {{ query_flight_form.destination }}
+                  </div>
+
+
+
+                  <div>
+                      <button type="submit" class="btn btn-primary float-right">查询航班</button>
+                  </div>
+                </form>
+            </div>
+    </div> <!-- /contai
 <script src="{% static 'jquery-3.4.1.min.js' %}"></script>
 <script src="{% static 'bootstrap/js/bootstrap.min.js'%}"></script>
 </body>

@@ -37,7 +37,7 @@ class User(models.Model):
     flight_mileage = models.FloatField(verbose_name="飞行里程", default=0)
     total_consumption = models.FloatField(verbose_name="消费总额", default=0)
     balance = models.FloatField(default=0,verbose_name="余额")
-    # is_super
+    # is_super = models.BooleanField(default=False,verbose_name="是否是管理员")
     profession = models.CharField(blank=True,verbose_name="职业",max_length=32)
 
     def __str__(self):

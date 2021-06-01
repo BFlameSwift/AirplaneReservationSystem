@@ -60,7 +60,7 @@
 </div>
   <div class="container">
             <div class="col">
-                <form class="form-login" action="/query_flight/" method="post">
+                <form class="form-query_flight" action="/query_flight/" method="post">
 
                 {% if message %}
                     <div class="alert alert-warning">{{ message }}</div>
@@ -70,19 +70,16 @@
                   <h3 class="text-center">查询航班</h3>
 
                   <div class="form-group">
-                    {{ login_form.username.label_tag }}
-                    {{ login_form.username }}
+                    {{ query_flight_form.origination.label_tag }}
+                    {{ query_flight_form.origination }}
                   </div>
 
                   <div class="form-group">
-                    {{ login_form.password.label_tag }}
-                    {{ login_form.password }}
+                    {{ query_flight_form.destination.label_tag }}
+                    {{ query_flight_form.destination }}
                   </div>
 
-                  <div class="form-group">
-                    {{ login_form.captcha.label_tag }}
-                    {{ login_form.captcha }}
-                  </div>
+
 
                   <div>
                       <button type="submit" class="btn btn-primary float-right">查询航班</button>

@@ -7,7 +7,7 @@ import json
 def tangshi(request):
     ts1= request.GET.get('ts1')
     ts2 = request.GET.get('ts2')
-    return render(request,'test_ajax/tangshi.html')
+    return render(request, '/test_ajax/tangshi.html')
     # return render(request,'media/month.jpg')
 def tangshi_ret(request):
     ts1 = request.GET.get('ts1')
@@ -31,7 +31,7 @@ def tangshi_img(request):
 def list_person(request):
     per_list=models.person.objects.all()
 
-    return render(request,'test_ajax/list_person.html',{'person_list':per_list})
+    return render(request, 'test_ajax/list_person.html', {'person_list':per_list})
 def del_row(request):
         id = request.GET.get("id")
         print(id)
@@ -58,7 +58,7 @@ def add_person(request):
             return JsonResponse(ret)
 
     form_obj=forms.person_form() #第一次打开页面，初始化一个表单对象
-    return render(request,'test_ajax/add_person.html',{'formobj':form_obj}) #定向到增加页面，并传递参数
+    return render(request, 'test_ajax/add_person.html', {'formobj':form_obj}) #定向到增加页面，并传递参数
 
 # 校验用户名是否已被注册
 def test_name(request):

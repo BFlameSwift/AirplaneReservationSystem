@@ -52,12 +52,12 @@ def index(request): # 个人中心，
     except Order.DoesNotExist:
         message = '订单不存在'
         response['msg'] = '订单不存在'
-        response['error'] = 1
+        response['status'] = 1
         # response[]
         return JsonResponse(response)
         # return JsonResponse({'message':message,'user_dict':user_dict})
     except Exception as e:
-        response['error'] = 2
+        response['status'] = 2
         response['msg'] = str(e)
     # data = serializers.serialize('xml',User.objects.all(),fileds = ('name','password'))
     # List = list(flight_list)
@@ -68,7 +68,7 @@ def index(request): # 个人中心，
     # print(orders)
     response['orders'] = json.loads(serializers.serialize("json",orders))
     response['user'] = model_to_dict(user)
-    response['error'] = 0
+    response['status'] = 0
     return JsonResponse(response)
     # return JsonResponse(json.dumps({'user':user_dict,'orders':orders},cls=DjangoJSONEncoder),safe=False)
     # return render(request, 'login/index.html')
@@ -90,16 +90,20 @@ def login(request):
             username = login_form.cleaned_data.get('username')
             password = login_form.cleaned_data.get('password')
             user = User.objects.get(name=username)
+
+            #TODO 密码的格式判断
             try:
                 user = User.objects.get(name=username)
                 # user = User.ob
             except  :
                 # print(e)
                 message = response['msg'] = '用户不存在！'
-                # return JsonResponse(response[2])
+                response['status'] = 2
+                 # return JsonResponse(response[2])
                 return render(request, 'login/login.html', locals())
 
             if not user.has_confirmed:
+                response['status'] = 4
                 message = response['msg'] = '该用户还未经过邮件确认'
                 # return JsonResponse(response[4])
                 return render(request, 'login/login.html', locals())
@@ -108,7 +112,7 @@ def login(request):
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.name
-                response['error'] = 0
+                response['status'] = 0
                 message = response['msg'] = '登录成功'
 
                 # return JsonResponse(response[0])
@@ -116,6 +120,7 @@ def login(request):
             else:
 
                 message = response['msg'] = '密码不正确！'
+                response['status'] = 3
                 # return JsonResponse(response[3])
                 return render(request, 'login/login.html', locals())
         else:
@@ -130,7 +135,7 @@ def login(request):
 def register(request):
     if request.session.get('is_login', None):
         return redirect('/index/')
-
+    response = {}
     if request.method == 'POST':
         register_form = forms.RegisterForm(request.POST)
         message = "请检查填写的内容！"
@@ -142,22 +147,31 @@ def register(request):
             sex = register_form.cleaned_data.get('sex')
             Id_number = register_form.cleaned_data.get('Id_number')
             real_name = register_form.cleaned_data.get('real_name')
+            phone_number = register_form.cleaned_data.get('phone_number')
             if password1 != password2:
-                message = '两次输入的密码不同！'
-                return render(request, 'login/register.html', locals())
+                response['msg'] = message = '两次输入的密码不同！'
+                response['status'] = 1
+                return JsonResponse(response)
+                # return render(request, 'login/register.html', locals())
             else:
                 same_name_user = User.objects.filter(name=username)
                 if same_name_user:
-                    message = '用户名已经存在'
-                    return render(request, 'login/register.html', locals())
+                    response['status'] = 2
+                    response['msg'] = message = '用户名已经存在'
+                    return JsonResponse(response)
+                    # return render(request, 'login/register.html', locals())
                 same_email_user = User.objects.filter(email=email)
                 if same_email_user:
-                    message = '该邮箱已经被注册了！'
-                    return render(request, 'login/register.html', locals())
+                    response['status'] = 3
+                    response['msg'] = message = '该邮箱已经被注册了！'
+                    return JsonResponse(response)
+                    # return render(request, 'login/register.html', locals())
                 same_id_number_user = User.objects.filter(Id_number = Id_number)
                 if same_id_number_user:
-                    message = '相同的身份证号已经存在'
-                    return render(request, 'login/register.html', locals())
+                    response['status'] = 4
+                    response['msg'] = message = '相同的身份证号已经存在'
+                    return JsonResponse(response)
+                    # return render(request, 'login/register.html', locals())
 
                 new_user = User()
                 new_user.name = username
@@ -167,15 +181,20 @@ def register(request):
                 new_user.Id_number = Id_number
                 new_user.credit_rating = '2'
                 new_user.real_name = real_name
+                new_user.phone_number = phone_number
                 new_user.save()
 
                 code = make_confirm_string(new_user)
                 send_email(email, code)
-
-                message = '请前往邮箱进行确认！'
-                return render(request, 'login/confirm.html', locals())
+                response['status'] = 0
+                response['msg'] = message = '请前往邮箱进行确认！'
+                return JsonResponse(response)
+                # return render(request, 'login/confirm.html', locals())
         else:
-            return render(request, 'login/register.html', locals())
+            response['status'] = 5
+            response['msg'] = message = '输入格式有误，请检查输入'
+            return JsonResponse(response)
+            # return render(request, 'login/register.html', locals())
     register_form = forms.RegisterForm()
     return render(request, 'login/register.html', locals())
 

@@ -29,7 +29,7 @@ class FlightrForm(forms.Form):
     landing_airport = forms.CharField(max_length=64, label="目的机场", widget=forms.TextInput(attrs={'class': 'form-control'}))
     arrival_time = forms.TimeField(label="到达时间",widget=forms.TimeInput(attrs={'class': 'form-control'}))
     first_class_price = forms.FloatField(label="头等舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    highlevel_economy_class_price = forms.FloatField(label="高级经济舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    # highlevel_economy_class_price = forms.FloatField(label="高级经济舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
     business_class_price = forms.FloatField(label="商务舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
     economy_class_price = forms.FloatField(label="经济舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
 

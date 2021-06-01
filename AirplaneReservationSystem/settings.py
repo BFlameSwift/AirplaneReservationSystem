@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'login',
     'background',
-    'captcha',
+    # 'captcha',
     'kernel',
 
     'test_ajax',

@@ -21,6 +21,7 @@ from .pays import get_pay
 @csrf_exempt
 def query_flight(request):
     message = '请输入航班信息'
+    response = {}
     if request.method == 'POST':
         print('is post')
         query_flight_form = forms.QueryFlightForm(request.POST)
@@ -31,15 +32,22 @@ def query_flight(request):
             origination = query_flight_form.cleaned_data.get('origination')
             destination = query_flight_form.cleaned_data.get('destination')
             flight_list = Flight.objects.filter(origination=origination,destination=destination)
+            response['flight_list'] = flight_list
+            #TODO 可能会有bug
+            response['status'] = 1
             print(locals())
             # flight_list 返回的航班，可以直接输出
-            return render(request, 'list_employee.html', locals())
+
+            # return render(request, 'list_employee.html', locals())
             # return JsonResponse({
             #     'message':'success'
             # })
         else:
-            message = '你输入的信息无效，请重输入'
-            return JsonResponse(json.dumps(locals()))
+            response['msg'] = message = '你输入的信息无效，请重输入'
+            response['status'] = 2
+
+            return JsonResponse(response)
+            # return JsonResponse(json.dumps(locals()))
         # return render(request,'list_employee.html',locals())
 
         # flight_list = Flight.objects.filter(origination='北京')
@@ -67,17 +75,22 @@ def book_ticket(request):
 # 不能同一个人选择同一时间的同一航班 Done
 # Done 测试信用评价成功
 # TODO 高信用等级打折
+    response = {}
     if not request.session.get('is_login', None):
-        message = '您尚未登录'
+
+        response['msg'] = message = '您尚未登录'
+        response['status'] = -1
         return redirect('/login/')
     if request.method == 'POST':
         username = request.session.get('user_name')
         user = User.objects.get(name=username)
         user_dict = model_to_dict(user)
-
+        response['user'] = user_dict
         if not setting_credit(user): # 函数在下面
-            message = '您的信用等级较低，无法订票'
-            return render(request, 'book_ticket.html', locals())
+            response['msg'] = message = '您的信用等级较低，无法订票'
+            response['status'] = 1
+            return JsonResponse(response)
+            # return render(request, 'book_ticket.html', locals())
 
         money = float(request.POST.get('money'))
         flight_number = request.POST.get('flight_number')
@@ -89,7 +102,7 @@ def book_ticket(request):
         print(money,flight_number,date)
         try:
             flight = Flight.objects.get(flight_number = flight_number)
-
+            response['flight'] = model_to_dict(flight)
             the_datetime = datetime.datetime(
                 date.year,date.month,date.day,
                 flight.flight_time.hour,flight.flight_time.minute,flight.flight_time.second
@@ -97,41 +110,54 @@ def book_ticket(request):
             # the_datetime.date = date
             # the_datetime.time = flight.flight_time
             concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
-
+            response['concrete_flight'] = model_to_dict(concrete_flight)
+            response['the_datetime'] = the_datetime
 
             # 同一个人不能买一个机票两次
             try:
                 order = Order.objects.get(user=user,flight_datetime=the_datetime,order_is_valid=True)
-                message = '您已经预订过本次航班，请勿重复订购'
-                return render(request, 'book_ticket.html', locals())
+                response['msg'] = message = '您已经预订过本次航班，请勿重复订购'
+                response['order'] = model_to_dict(order)
+                response['status'] = 2
+                return JsonResponse(response)
+                # return render(request, 'book_ticket.html', locals())
 
             except Exception as e:
                 pass
                 # 找不到订单就对了
 
             if concrete_flight.book_sum >= concrete_flight.plane_capacity :
-                message = '航班已满，请乘坐其他航班'
-                return render(request, 'book_ticket.html', locals())
+                response['status'] = 3
+                response['msg'] = message = '航班已满，请乘坐其他航班'
+                return JsonResponse(response)
+                # return render(request, 'book_ticket.html', locals())
 
             if user.balance < money:
                 # message = '余额不足，请充值，或请您选择是否支付宝付全款'
-                message = '余额不足，请使用支付宝充值'
+                response['status'] = 4
+                response['msg'] = message = '余额不足，请使用支付宝充值'
                 # TODO 选择
-                return render(request, 'book_ticket.html', locals()) # 此时应还有个充值按钮
+                return JsonResponse(response)
+                # return render(request, 'book_ticket.html', locals()) # 此时应还有个充值按钮
 
             # 所以这里使用函数来支付，因为当上面选择支付宝支付的时候也是成功支付了
             pay_ticket(user, flight, date, money)
-            message = '支付成功'
+            response['msg'] = message = '支付成功'
+            response['status'] = 0
             print(message)
-            return render(request, 'book_ticket.html', locals())
+            return JsonResponse(response)
+            # return render(request, 'book_ticket.html', locals())
 
         except Flight.DoesNotExist:
-            message = '航班不存在，请重新选择航班'
-            return render(request, 'book_ticket.html', locals())
+            response['msg'] = message = '航班不存在，请重新选择航班'
+            response['status'] = 6
+            return JsonResponse(response)
+            # return render(request, 'book_ticket.html', locals())
         except Concrete_flight.DoesNotExist:
-            message = '当天该航班并不直飞，请选择其他航班'
-            return render(request, 'book_ticket.html', locals())
-
+            response['status'] = 5
+            response['msg'] = message = '当天该航班并不直飞，请选择其他航班'
+            # return render(request, 'book_ticket.html', locals())
+            return JsonResponse(response)
 
     else:
         return render(request,'book_ticket.html',locals())
@@ -141,22 +167,30 @@ def cancel_ticket(request):
 # TODO 计划应该是前端传过来必定有的订单来退订，所以不必设置无法退订不存在的订单
     if not request.session.get('is_login', None):
         message = '您尚未登录'
+
         return redirect('/login/')
+    response = {}
     if request.method == 'POST':
         username = request.session.get('user_name')
         user = User.objects.get(name=username)
         user_dict = model_to_dict(user)
-        flight_number = request.POST.get('flight_number')
-        date_str = str(request.POST.get('date'))
-        year, mouth, day = map(int, date_str.split('-'))
-        date = datetime.date(year, mouth, day)
-
+        #Done 传入订单号
+        order_number = request.POST.get('order_number')
+        order = Order.objects.get(order_number=order_number)
+        # flight_number = request.POST.get('flight_number')
+        # flight_number = order.flight.flight_number
+        # date_str = str(request.POST.get('date'))
+        # year, mouth, day = map(int, date_str.split('-'))
+        # date = datetime.date(year, mouth, day)
+        # the_datetime = order.flight_datetime
         try:
-            flight = Flight.objects.get(flight_number=flight_number)
-            the_datetime = datetime.datetime(
-                date.year, date.month, date.day,
-                flight.flight_time.hour, flight.flight_time.minute, flight.flight_time.second
-            )
+            # flight = Flight.objects.get(flight_number=flight_number)
+            flight=order.flight
+            the_datetime = order.flight_datetime
+            # the_datetime = datetime.datetime(
+            #     date.year, date.month, date.day,
+            #     flight.flight_time.hour, flight.flight_time.minute, flight.flight_time.second
+            # )
             concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
 
             # return render(request, 'cancel_ticket.html', locals())
@@ -178,22 +212,27 @@ def cancel_ticket(request):
             order.save()
             seat.save()
 
-            message = '退票成功'
-            return render(request, 'cancel_ticket.html', locals())
+            response['msg'] = message = '退票成功'
+            return JsonResponse(response)
+            # return render(request, 'cancel_ticket.html', locals())
 
 
         except Flight.DoesNotExist:# 航班不存在
-            message = '航班不存在， 请重新输入'
-            return render(request, 'cancel_ticket.html', locals())
+            response['msg'] = message = '航班不存在， 请重新输入'
+            return JsonResponse(response)
+            # return render(request, 'cancel_ticket.html', locals())
         except Order.DoesNotExist:
-            message = '订单不存在，请重新输入'
-            return render(request, 'cancel_ticket.html', locals())
+            response['msg'] = message = '订单不存在，请重新输入'
+            return JsonResponse(response)
+            # return render(request, 'cancel_ticket.html', locals())
         except Concrete_flight.DoesNotExist:
-            message = '当天该航班并不直飞，请重新输入'
-            return render(request, 'cancel_ticket.html', locals())
+            response['msg'] = message = '当天该航班并不直飞，请重新输入'
+            return JsonResponse(response)
+            # return render(request, 'cancel_ticket.html', locals())
     else:
+        # return redirect('index/')
         return render(request, 'cancel_ticket.html', locals())
-
+# TODO 计划应该是前端传过来必定有的订单来退订，所以不必设置无法退订不存在的订单
 
     # 前端传来航班号和购买机票的航班类型
     # 目前采用html输入航班号和类型来实现。。
