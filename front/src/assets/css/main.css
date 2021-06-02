@@ -1,0 +1,180 @@
+body {
+  height: 100%;
+  width: 100%;
+}
+  input {
+    border-radius: 5px;
+  }
+  img {
+    border-radius: 5px;
+  }
+  .to_login{
+    position: absolute;
+    font-size: 15px;
+    /* color: black; */
+    color: #54545e;
+    cursor: pointer;
+  }
+  .line{
+    position: absolute;
+    bottom: 7%;
+    font-size: 20px;
+    /* color: black; */
+    color: #54545e;
+    cursor: pointer;
+}
+
+  .head {
+    position: absolute;
+    background-color: #ffffff;
+    color:black;
+    top: 0%;
+    height: 16%;
+    width: 100%;
+  
+  }
+  .input-with-select .el-input-group__prepend {
+    background-color: #fff;
+  }
+  
+  .login_container {
+    background-color: #2b4b6b;
+    height: 100%;
+  }
+  
+  .search{
+    position: absolute;
+    height: 47%;
+    width: 14%;
+    right: 2%;
+    top: 40%;
+    background-color: #FFC0CB;
+    border: 1px solid #eee;
+    border-radius: 10px;
+  }
+  .login_box {
+    width: 900px;
+    height: 270px;
+    background-color: #fff;
+    border-radius: 3px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 15px;
+    box-shadow:2px 2px 5px #000;
+    transform: translate(-50%, -50%);
+  }
+  .avator_box {
+    height: 130px;
+    width: 130px;
+    border: 1px solid #eee;
+    border-radius: 50%;
+    padding: 10px;
+    box-shadow: 0 0 10px #ddd;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+  }
+  .login_form {
+    position: absolute;
+    bottom: 40%;
+    width: 40%;
+    height: 20%;
+    padding: 0 10px;
+  }
+  .date {
+    position: absolute;
+    top: 40%;
+    left: 45%;
+    height: 47%;
+    width: 20%;
+    border-radius: 5px;
+    border: 0.3px solid #adadad;
+  }
+  .day {
+    position: absolute;
+    writing-mode: lr-tb;
+    left: 50%;
+    bottom: 10%;
+    transform: translate(-50%);
+    padding: 0px 10px;
+  }
+  .month {
+    position: absolute;
+    writing-mode: lr-tb;
+    left: 50%;
+    bottom: 50%;
+    transform: translate(-50%);
+    padding: 0px 10px;
+  }
+  .passen {
+    position: absolute;
+    left: 67%;
+    top: 42%;
+    width: 15%;
+    border: 0.3px solid #adadad;
+  }
+  .seat {
+    position: absolute;
+    left: 67%;
+    top: 70%;
+    width: 15%;
+    border: 0.3px solid #adadad;
+  }
+  .icon-search {
+    width: 12px;
+    height: 12px;
+    border-radius: 100%;
+    border: 2px solid currentcolor;
+    position: relative;
+    margin: 30px auto;
+  }
+  .icon-search:after {
+    content: "";
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    transform: rotate(45deg);
+    width: 8px;
+    height: 2px;
+    position: absolute;
+    top: 13px;
+    left: 11px;
+    background-color: currentcolor;
+  }
+  .title_on{
+    position: absolute;
+    font-size: 20px;
+    font-family: 黑体;
+    font-weight: bold;
+    background: linear-gradient(#3399ff, #3399ff) no-repeat;
+    background-size: 100% 1px;
+    background-position: 0 2.5em;
+    text-shadow: 0.05em 0 #fff, -0.05em 0 #fff;
+    color: #3399ff;
+    cursor: pointer;
+  }
+  .title_off{
+    position: absolute;
+    font-size: 20px;
+    font-family: 黑体;
+    font-weight: bold;
+    text-shadow: 0.05em 0 #fff, -0.05em 0 #fff;
+    color: black;
+    cursor: pointer;
+  }
+  .left{
+    position: absolute;
+    top: 50%;
+    left: 4%;
+  }
+  .right{
+    position: absolute;
+    top: 50%;
+    right: 4%;
+  }
+  .hr{
+    position: relative;
+    margin-top:110px;
+  
+  }

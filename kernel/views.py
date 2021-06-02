@@ -110,7 +110,7 @@ def book_ticket(request):
             # the_datetime.date = date
             # the_datetime.time = flight.flight_time
             concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
-            response['concrete_flight'] = model_to_dict(concrete_flight)
+            response['concrete_flight'] = model_to_dict(concrete_flight  )
             response['the_datetime'] = the_datetime
 
             # 同一个人不能买一个机票两次

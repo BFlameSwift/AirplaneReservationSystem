@@ -81,14 +81,16 @@ def  change_information(request):
 @csrf_exempt
 def login(request):
     response = {}
-    if request.session.get('is_login', None):  # 不允许重复登录
-        return redirect('/index/')
+    # if request.session.get('is_login', None):  # 不允许重复登录
+    #     return redirect('/index/')
     if request.method == 'POST':
         login_form = forms.UserForm(request.POST)
         message = response['msg'] = '请检查填写的内容！'
         if login_form.is_valid():
             username = login_form.cleaned_data.get('username')
             password = login_form.cleaned_data.get('password')
+            # username = request.POST.get('username')
+            # password = request.POST.get('password')
             user = User.objects.get(name=username)
 
             #TODO 密码的格式判断
@@ -99,14 +101,14 @@ def login(request):
                 # print(e)
                 message = response['msg'] = '用户不存在！'
                 response['status'] = 2
-                 # return JsonResponse(response[2])
-                return render(request, 'login/login.html', locals())
+                return JsonResponse(response)
+                # return render(request, 'login/login.html', locals())
 
             if not user.has_confirmed:
                 response['status'] = 4
                 message = response['msg'] = '该用户还未经过邮件确认'
-                # return JsonResponse(response[4])
-                return render(request, 'login/login.html', locals())
+                return JsonResponse(response)
+                # return render(request, 'login/login.html', locals())
 
             if user.password == password:
                 request.session['is_login'] = True
@@ -114,22 +116,24 @@ def login(request):
                 request.session['user_name'] = user.name
                 response['status'] = 0
                 message = response['msg'] = '登录成功'
-
+                # TODO is_super 跳转管理员界面
                 # return JsonResponse(response[0])
                 return redirect('/index/')
             else:
 
                 message = response['msg'] = '密码不正确！'
                 response['status'] = 3
-                # return JsonResponse(response[3])
-                return render(request, 'login/login.html', locals())
+                return JsonResponse(response)
+                # return render(request, 'login/login.html', locals())
         else:
-            # return JsonResponse(response[5])
-            return render(request, 'login/login.html', locals())
+            response['status'] = 5
+            return JsonResponse(response)
+            # return render(request, 'login/login.html', locals())
 
     login_form = forms.UserForm()
-    # return JsonResponse({})
-    return render(request, 'login/login.html', locals())
+
+    return JsonResponse({})
+    # return render(request, 'login/login.html', locals())
 
 @csrf_exempt
 def register(request):
@@ -216,6 +220,7 @@ def user_confirm(request):
 
         confirm = ConfirmString.objects.get(code=code)
     except:
+
         message = '无效的确认请求!'
         return render(request, 'login/confirm.html', locals())
 

@@ -38,6 +38,10 @@ INSTALLED_APPS = [
 
     'test_ajax',
     # 'rest_framework',
+    'corsheaders',
+    'rest_framework',
+    'rest_framework_swagger',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +51,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,13 +63,20 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_WHITELIST = (
+	'http://127.0.0.1:8000',
+    'http://localhost:8000'
+)
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'AirplaneReservationSystem.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        # 'DIRS': [BASE_DIR / 'templates']
+
+        'DIRS': [BASE_DIR/ 'front/dist'],  # 修改的行e,
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,10 +147,13 @@ USE_TZ = False    # 这里修改了
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-STATIC_URL = '/static/'
+# APPEND_SLASH=False
+# STATIC_URL = '/sta
+# tic/'
+STATIC_URL = '/front/dist/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    # os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR,'front/dist/static')
 ]
 
 # Default primary key field type
