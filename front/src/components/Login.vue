@@ -82,7 +82,7 @@ export default {
       const formData = new FormData();
       formData.append("username",this.username)
       formData.append("password",this.pwd)
-      this.$http.post('/login/',formData)
+      this.$http.post('/api/login/',formData)
       .then(result=>{
         if(result.data.status === 0){
           this.$message.success('登录成功')

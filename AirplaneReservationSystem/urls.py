@@ -30,8 +30,8 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('index/', views.index),
-    path('login/', views.login),
-    path('register/', views.register),
+    path('api/login/', views.login),
+    path('api/register/', views.register),
     path('logout/', views.logout),
     # path('captcha/',include('captcha.urls')),
     path('confirm/', views.user_confirm),
