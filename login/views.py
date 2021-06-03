@@ -19,6 +19,11 @@ from django.conf import settings
 
 import json
 
+from django.contrib.auth import authenticate, login
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_jwt.settings import api_settings
 # Create your views here.
 
 def hash_code(s, salt='bflame'):
@@ -31,34 +36,41 @@ def hash_code(s, salt='bflame'):
 
 def index(request): # 个人中心，
     # 向前端传送个人的全部信息和个人的全部订单
+
+
     if not request.session.get('is_login',None):
         return redirect('/login/')
-    username = request.session.get('user_name')
-    user = User.objects.get(name = username)
-    user_dict = model_to_dict(user)
-    # 应该可以通过user.''来访问
-    # print(json.dumps(user))
-    # print(user_value)
-    response = {}
-    response['user'] = user_dict
-    try:
-        orders = Order.objects.filter(user=user).all()
-        # orders_dict = model_to_dict(orders)
-        # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
-        #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
-        #                                          'seat_number','order_is_valid','luggage_weight','flight_type'))
-        # orders = serializers.serialize('xml', Order.objects.filter(user=user).all(),)
-        # 只能打印出来，当然最终应使用第一种查询方法
-    except Order.DoesNotExist:
-        message = '订单不存在'
-        response['msg'] = '订单不存在'
-        response['status'] = 1
-        # response[]
-        return JsonResponse(response)
+
+    if request.method == 'POST':
+        pass
+        # 每一个个人信息都传过来直接保存
+    else:
+        username = request.session.get('user_name')
+        user = User.objects.get(name = username)
+        user_dict = model_to_dict(user)
+        # 应该可以通过user.''来访问
+        # print(json.dumps(user))
+        # print(user_value)
+        response = {}
+        response['user'] = user_dict
+        try:
+            orders = Order.objects.filter(user=user).all()
+            # orders_dict = model_to_dict(orders)
+            # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
+            #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
+            #                                          'seat_number','order_is_valid','luggage_weight','flight_type'))
+            # orders = serializers.serialize('xml', Order.objects.filter(user=user).all(),)
+            # 只能打印出来，当然最终应使用第一种查询方法
+        except Order.DoesNotExist:
+            message = '订单不存在'
+            response['msg'] = '订单不存在'
+            response['status'] = 1
+            # response[]
+            return JsonResponse(response)
         # return JsonResponse({'message':message,'user_dict':user_dict})
-    except Exception as e:
-        response['status'] = 2
-        response['msg'] = str(e)
+        except Exception as e:
+            response['status'] = 2
+            response['msg'] = str(e)
     # data = serializers.serialize('xml',User.objects.all(),fileds = ('name','password'))
     # List = list(flight_list)
     # print(model_to_dict(orders))
@@ -66,10 +78,10 @@ def index(request): # 个人中心，
     # for order in orders:
     #     print(order)
     # print(orders)
-    response['orders'] = json.loads(serializers.serialize("json",orders))
-    response['user'] = model_to_dict(user)
-    response['status'] = 0
-    return JsonResponse(response)
+        response['orders'] = json.loads(serializers.serialize("json",orders))
+        response['user'] = model_to_dict(user)
+        response['status'] = 0
+        return JsonResponse(response)
     # return JsonResponse(json.dumps({'user':user_dict,'orders':orders},cls=DjangoJSONEncoder),safe=False)
     # return render(request, 'login/index.html')
 
@@ -91,19 +103,21 @@ def login(request):
             password = login_form.cleaned_data.get('password')
             # username = request.POST.get('username')
             # password = request.POST.get('password')
-            user = User.objects.get(name=username)
+            # user = User.objects.get(name=username)
 
             #TODO 密码的格式判断
             try:
                 user = User.objects.get(name=username)
                 # user = User.ob
-            except  :
+            except User.DoesNotExist:
                 # print(e)
                 message = response['msg'] = '用户不存在！'
                 response['status'] = 2
                 return JsonResponse(response)
                 # return render(request, 'login/login.html', locals())
-
+            except Exception as e:
+                print(e)
+                return JsonResponse(response)
             if not user.has_confirmed:
                 response['status'] = 4
                 message = response['msg'] = '该用户还未经过邮件确认'
@@ -115,10 +129,18 @@ def login(request):
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.name
                 response['status'] = 0
+
+                # is_login = authenticate(request, username=username, password=password)
+                # jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+                # jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+                # payload = jwt_payload_handler(is_login)
+                # token = jwt_encode_handler(payload)
+                token = username+password
+                response['token'] = token
                 message = response['msg'] = '登录成功'
                 # TODO is_super 跳转管理员界面
-                # return JsonResponse(response[0])
-                return redirect('/index/')
+                return JsonResponse(response)
+                # return redirect('/index/')
             else:
 
                 message = response['msg'] = '密码不正确！'
