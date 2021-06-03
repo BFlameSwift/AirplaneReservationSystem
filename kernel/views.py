@@ -170,6 +170,9 @@ def cancel_ticket(request):
 
         return redirect('/login/')
     response = {}
+    username = request.session['user_name']
+    user = User.objects.get(name=username)
+    response['token'] = user.name+user.password
     if request.method == 'POST':
         username = request.session.get('user_name')
         user = User.objects.get(name=username)
@@ -209,6 +212,7 @@ def cancel_ticket(request):
             setting_credit(user) # 更新信用
             user.save()
             concrete_flight.save()
+            order.concrete_flight = concrete_flight
             order.save()
             seat.save()
 
@@ -324,6 +328,7 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
     user.save()
     # flight.save()
     contrete_flight.save()
+    order.concrete_flight.save()
     order.save()
 
 def get_flight_type(money,flight):

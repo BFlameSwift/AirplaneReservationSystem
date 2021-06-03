@@ -145,6 +145,7 @@ JWT_AUTH = {
     # 设置token有效时间
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=60 * 60 * 2)
 }
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

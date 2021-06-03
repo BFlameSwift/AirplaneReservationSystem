@@ -26,4 +26,6 @@ class RegisterForm(forms.Form):
                                 widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     Id_number = forms.CharField(max_length=20,
                                 widget=forms.TextInput(attrs={'class': 'form-control'}), label="身份证号")
+    birthday = forms.CharField(max_length=30,
+                                widget=forms.TextInput(attrs={'class': 'form-control'}), label="出生日期")
     # captcha = CaptchaField(label='验证码')

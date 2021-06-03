@@ -84,6 +84,7 @@ class FlightSeatingChart(models.Model):
 class Order(models.Model):
     order_number = models.AutoField(primary_key=True,verbose_name = "订单编号")
     flight = models.ForeignKey(Flight,verbose_name="航班",on_delete=models.CASCADE)
+    concrete_flight = models.ForeignKey(Concrete_flight,verbose_name="具体航班",on_delete=models.CASCADE)
     # flight_date = models.DateField(verbose_name="航班飞行日期")
     flight_datetime = models.DateTimeField(verbose_name="航班飞行具体时间",default=datetime.datetime.now())
     user = models.ForeignKey(User,verbose_name="用户",on_delete=models.CASCADE)

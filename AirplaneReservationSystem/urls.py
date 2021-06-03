@@ -32,19 +32,20 @@ urlpatterns = [
     path('index/', views.index),
     path('api/login/', views.login),
     path('api/register/', views.register),
-    path('logout/', views.logout),
+    path('api/logout/', views.logout),
     # path('captcha/',include('captcha.urls')),
     path('confirm/', views.user_confirm),
-    path('background/entry_flight/',entry_flight),
-    path('background/delete_flight/',delete_flight),
-    path('background/produce_flight/',setting_new_flight),
+    path('api/background/entry_flight/',entry_flight),
+    path('api/background/delete_flight/',delete_flight),
+    path('api/background/produce_flight/',setting_new_flight),
 
-    path('query_flight/',query_flight),
+    path('api/query_flight/',query_flight),
 
-    path('book_ticket/',kernel.views.book_ticket),
-    path('cancel_ticket/',kernel.views.cancel_ticket),
+    path('api/book_ticket/',kernel.views.book_ticket),
+    path('api/cancel_ticket/',kernel.views.cancel_ticket),
 
-    path('pay/', kernel.views.paysView, name='pays'),
+    path('api/pay/', kernel.views.paysView, name='pays'),
+    # TODO 支付后返回的url
 
     path('test_ajax/',include('test_ajax.urls'))
 

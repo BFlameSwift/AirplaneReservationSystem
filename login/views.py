@@ -1,6 +1,6 @@
 import datetime
 import hashlib
-
+import re
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -25,7 +25,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.settings import api_settings
 # Create your views here.
-
+response = {}
 def hash_code(s, salt='bflame'):
     h = hashlib.sha256()
     s += salt
@@ -37,9 +37,8 @@ def hash_code(s, salt='bflame'):
 def index(request): # 个人中心，
     # 向前端传送个人的全部信息和个人的全部订单
 
-
     if not request.session.get('is_login',None):
-        return redirect('/login/')
+        return redirect('/')
 
     if request.method == 'POST':
         pass
@@ -51,10 +50,15 @@ def index(request): # 个人中心，
         # 应该可以通过user.''来访问
         # print(json.dumps(user))
         # print(user_value)
-        response = {}
+
         response['user'] = user_dict
         try:
-            orders = Order.objects.filter(user=user).all()
+            orders_after = Order.objects.filter(user=user,flight_datetime__gte=datetime.datetime.now()).all()
+            orders_before = Order.objects.filter(user=user,flight_datetime__lte=datetime.datetime.now()).all()
+            flights_before = {}
+            flights_after = {}
+            concrete_flights_before = {}
+            concrete_flights_after = {}
             # orders_dict = model_to_dict(orders)
             # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
             #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
@@ -69,16 +73,38 @@ def index(request): # 个人中心，
             return JsonResponse(response)
         # return JsonResponse({'message':message,'user_dict':user_dict})
         except Exception as e:
+            # print(flights_after)
             response['status'] = 2
             response['msg'] = str(e)
-    # data = serializers.serialize('xml',User.objects.all(),fileds = ('name','password'))
-    # List = list(flight_list)
-    # print(model_to_dict(orders))
-    # order = Order()
-    # for order in orders:
-    #     print(order)
-    # print(orders)
-        response['orders'] = json.loads(serializers.serialize("json",orders))
+            return JsonResponse(response)
+        i=0
+        for order in orders_before:
+            flight_dict = model_to_dict(order.flight)
+
+            concrete_flight_dict = model_to_dict(order.concrete_flight)
+            flights_before.update({'flight{}'.format(i):flight_dict})
+            print('flight{}'.format(i))
+            concrete_flights_before.update({'concrete_flight{}'.format(i):concrete_flight_dict})
+            i += 1
+        i=0
+        for order in orders_after:
+            flight_dict = model_to_dict(order.flight)
+
+            concrete_flight_dict = model_to_dict(order.concrete_flight)
+            flights_after.update({'flight{}'.format(i): flight_dict})
+            print('flight{}'.format(i))
+            concrete_flights_before.update({'concrete_flight{}'.format(i): concrete_flight_dict})
+            i += 1
+
+        response['orders_after'] = json.loads(serializers.serialize("json",orders_after))
+        response['orders_before'] = json.loads(serializers.serialize("json",orders_before))
+        response['flights_after'] = flights_after
+        response['flights_before'] = flights_before
+
+        response['concrete_flights_after'] = concrete_flights_after
+        response['concrete_flights_before'] = concrete_flights_before
+
+
         response['user'] = model_to_dict(user)
         response['status'] = 0
         return JsonResponse(response)
@@ -92,9 +118,12 @@ def  change_information(request):
 # postman 使用x-www-form-urlencoded模式即可
 @csrf_exempt
 def login(request):
-    response = {}
-    # if request.session.get('is_login', None):  # 不允许重复登录
-    #     return redirect('/index/')
+
+    if request.session.get('is_login', None):  # 不允许重复登录
+        username = request.session['user_name']
+        user = User.objects.get(name=username)
+        response['token'] = user.name+user.password
+        # return redirect('/index/')
     if request.method == 'POST':
         login_form = forms.UserForm(request.POST)
         message = response['msg'] = '请检查填写的内容！'
@@ -105,7 +134,7 @@ def login(request):
             # password = request.POST.get('password')
             # user = User.objects.get(name=username)
 
-            #TODO 密码的格式判断
+
             try:
                 user = User.objects.get(name=username)
                 # user = User.ob
@@ -128,13 +157,14 @@ def login(request):
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.name
+                if user.is_super:
+                    response['status'] = 1
+                    response['msg'] = '欢迎管理员'+user.name+'!'
+                    return JsonResponse(response)
+
                 response['status'] = 0
 
-                # is_login = authenticate(request, username=username, password=password)
-                # jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-                # jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-                # payload = jwt_payload_handler(is_login)
-                # token = jwt_encode_handler(payload)
+
                 token = username+password
                 response['token'] = token
                 message = response['msg'] = '登录成功'
@@ -161,7 +191,7 @@ def login(request):
 def register(request):
     if request.session.get('is_login', None):
         return redirect('/index/')
-    response = {}
+
     if request.method == 'POST':
         register_form = forms.RegisterForm(request.POST)
         message = "请检查填写的内容！"
@@ -174,9 +204,16 @@ def register(request):
             Id_number = register_form.cleaned_data.get('Id_number')
             real_name = register_form.cleaned_data.get('real_name')
             phone_number = register_form.cleaned_data.get('phone_number')
+            birthday = register_form.cleaned_data.get('birthday')
+            print(password1,password2)
+            print(password1==password2)
             if password1 != password2:
                 response['msg'] = message = '两次输入的密码不同！'
                 response['status'] = 1
+                return JsonResponse(response)
+            if not re.match('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$',password1):
+                response['msg'] = message = '密码格式错误，请输入8-20位字母+数字密码'
+                response['status'] = 7
                 return JsonResponse(response)
                 # return render(request, 'login/register.html', locals())
             else:
@@ -197,9 +234,23 @@ def register(request):
                     response['status'] = 4
                     response['msg'] = message = '相同的身份证号已经存在'
                     return JsonResponse(response)
+                same_phone_number_user= User.objects.filter(phone_number=phone_number)
+                if same_id_number_user:
+                    response['status'] = 8
+                    response['msg'] = message = '相同的手机号已经存在'
+                    return JsonResponse(response)
                     # return render(request, 'login/register.html', locals())
-
                 new_user = User()
+
+                try:
+                    year,mouth,day = map(int,birthday.split('-'))
+                    the_date = datetime.date(year,mouth,day)
+                    new_user.birthday = the_date
+                except:
+                    response['status'] = 6
+                    response['msg'] = message = '日期格式错误，请按照2021-01-01输入'
+                    return JsonResponse(response)
+
                 new_user.name = username
                 new_user.password = password1
                 new_user.email = email
@@ -222,13 +273,17 @@ def register(request):
             return JsonResponse(response)
             # return render(request, 'login/register.html', locals())
     register_form = forms.RegisterForm()
-    return render(request, 'login/register.html', locals())
-
+    return JsonResponse(response)
+    # return render(request, 'login/register.html', locals())
+@csrf_exempt
 def logout(request):
-    if not request.session.get('is_login', None):
-        return redirect("/login/")
+    # if not request.session.get('is_login', None):
+    #     return redirect("/login/")
     request.session.flush()
-    return redirect("/login/")
+    response['token'] = ''
+
+    return redirect("/")# 修改为返回主界面
+    # return redirect("/login/")
 
 def make_confirm_string(user):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -280,6 +335,4 @@ def send_email(email, code):
 
     msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
-
+    msg.send
