@@ -61,7 +61,7 @@
         "
       >
         <p class="tit">电子邮件地址</p>
-        <p class="personaldata">847638554@qq.com</p>
+        <p class="personaldata" >{{email}}</p>
       </div>
       <div
         style="
@@ -72,7 +72,7 @@
         "
       >
         <p class="tit">信用等级</p>
-        <p class="personaldata">三级</p>
+        <p class="personaldata">{{ credit }}</p>
       </div>
     </div>
 
@@ -97,7 +97,7 @@
         "
       >
         <p class="tit">性别</p>
-        <p class="personaldata">男</p>
+        <p class="personaldata">{{ sex }}</p>
       </div>
       <div
         style="
@@ -107,7 +107,7 @@
         "
       >
         <p class="tit">生日</p>
-        <p class="personaldata">2000年1月1日</p>
+        <p class="personaldata">{{ birthday }}</p>
       </div>
       <div
         style="
@@ -118,7 +118,7 @@
         "
       >
         <p class="tit">真实姓名</p>
-        <p class="personaldata">张三</p>
+        <p class="personaldata">{{ realname }}</p>
       </div>
     </div>
 
@@ -181,8 +181,21 @@ export default {
   data() {
     return {
       username: "jiawei",
+      realname: "",
+      birthday: "",
+      sex: "",
+      credit: "",
+      email: ""
     };
   },
+  created:function(){
+        this.username=this.$route.query.username;
+        this.realname=this.$route.query.realname;
+        this.birthday=this.$route.query.birthday;
+        this.sex=this.$route.query.sex;
+        this.credit=this.$route.query.credit;
+        this.email=this.$route.query.email;
+    },
   methods: {
     prev: function () {
       this.index--;

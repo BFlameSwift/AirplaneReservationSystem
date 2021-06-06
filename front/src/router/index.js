@@ -15,7 +15,12 @@ const routes = [
   { path: '/main/', component: main},
   { path: '/login/', component: Login},
   { path: '/register/', component: Register},
-  { path: '/personal/', component: Personal}
+  { path: '/personal/', component: Personal},
+  { path:'/displayFlight',component:()=>import("../views/displayFlight.vue")},
+  { path:'/fillOrder',component:()=>import("../views/fillOrder.vue")},
+  { path:'/afterBuy',component:()=>import("../views/afterBuy.vue")},
+  { path:'/admin',component:()=>import("../views/admin.vue")},
+  { path:'/addFlight',component:()=>import("../views/addFlight.vue")}
 ]
 
 // process.env.BASE_URL = '127.0.0.1:8000';
@@ -25,10 +30,14 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-// const  router = new Router({
-//   base: '/',
-//   mode: 'hash',
-//   routes: ROUTES
-// })
 
+//挂载路由导航守卫
+router.beforeEach((to,from,next) => {
+  if(to.path === '/login') return next();
+  if(to.path === '/register') return next();
+  if(to.path === '/main') return next();
+  const tokenStr = window.sessionStorage.getItem('token')
+  if(!tokenStr) return next('/login')
+  next()
+})
 export default router

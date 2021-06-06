@@ -2,7 +2,7 @@ from django.contrib import admin
 from . import models
 # Register your models here.
 admin.site.register(models.Flight)
-
+admin.site.register(models.Concrete_flight)
 admin.site.register(models.Order)
 
 class BackgroundAdmin(admin.ModelAdmin):

@@ -27,6 +27,7 @@ class User(models.Model):
     sex = models.CharField(max_length=32, choices=gender, default="男",verbose_name="邮箱")
     register_time = models.DateTimeField(auto_now_add=True)
     last_login_time = models.DateTimeField(auto_now=True,verbose_name="上次登录时间")
+
     birthday = models.DateField(blank=True, verbose_name="生日",default=datetime.date.today())
 
     phone_number = models.CharField(max_length=32,unique=True,verbose_name="手机号码")

@@ -3,7 +3,7 @@ import hashlib
 import re
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -20,10 +20,7 @@ from django.conf import settings
 import json
 
 from django.contrib.auth import authenticate, login
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework_jwt.settings import api_settings
+
 # Create your views here.
 response = {}
 def hash_code(s, salt='bflame'):
@@ -59,6 +56,10 @@ def index(request): # 个人中心，
             flights_after = {}
             concrete_flights_before = {}
             concrete_flights_after = {}
+
+            show_order_before = []
+            show_order_after = []
+
             # orders_dict = model_to_dict(orders)
             # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
             #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
@@ -80,10 +81,26 @@ def index(request): # 个人中心，
         i=0
         for order in orders_before:
             flight_dict = model_to_dict(order.flight)
-
             concrete_flight_dict = model_to_dict(order.concrete_flight)
             flights_before.update({'flight{}'.format(i):flight_dict})
             print('flight{}'.format(i))
+            mydict = {}
+            mydict['order_id'] = order.order_number
+            mydict['flight_number'] = order.flight.flight_number
+            mydict['valid'] = order.order_is_valid
+            mydict['origination'] = str(order.flight.origination)
+            mydict['destination'] = str(order.flight.destination)
+            mydict['departure_airport'] = str(order.flight.departure_airport)
+            mydict['landing_airport'] = str(order.flight.landing_airport)
+            mydict['starting_time'] = order.flight.starting_time.strftime("%H:%M:%S")
+            mydict['flight_time'] = order.flight.flight_time.strftime("%H:%M:%S")
+            mydict['arrival_time'] = order.flight.arrival_time.strftime("%H:%M:%S")
+            mydict['date'] = order.concrete_flight.flight_datetime.strftime('%Y-%m-%d')
+            mydict['price'] = order.price
+            mydict['flight_type'] = order.flight_type
+
+            show_order_before.append(mydict)
+
             concrete_flights_before.update({'concrete_flight{}'.format(i):concrete_flight_dict})
             i += 1
         i=0
@@ -95,11 +112,31 @@ def index(request): # 个人中心，
             print('flight{}'.format(i))
             concrete_flights_before.update({'concrete_flight{}'.format(i): concrete_flight_dict})
             i += 1
+            mydict = {}
+            mydict['order_id'] = order.order_number
+            mydict['flight_number'] = order.flight.flight_number
+            mydict['valid'] = order.order_is_valid
+            mydict['origination'] = str(order.flight.origination)
+            mydict['destination'] = str(order.flight.destination)
+            mydict['departure_airport'] = str(order.flight.departure_airport)
+            mydict['landing_airport'] = str(order.flight.landing_airport)
+            mydict['starting_time'] = order.flight.starting_time.strftime("%H:%M:%S")
+            mydict['flight_time'] = order.flight.flight_time.strftime("%H:%M:%S")
+            mydict['arrival_time'] = order.flight.arrival_time.strftime("%H:%M:%S")
+            mydict['date'] = order.concrete_flight.flight_datetime.strftime('%Y-%m-%d')
+            mydict['price'] = order.price
+            mydict['flight_type'] = order.flight_type
+
+            show_order_after.append(mydict)
 
         response['orders_after'] = json.loads(serializers.serialize("json",orders_after))
         response['orders_before'] = json.loads(serializers.serialize("json",orders_before))
         response['flights_after'] = flights_after
         response['flights_before'] = flights_before
+        print(show_order_before)
+
+        response['show_order_before'] = json.dumps(show_order_before, ensure_ascii=False)
+        response['show_order_after'] = json.dumps(show_order_after, ensure_ascii=False)
 
         response['concrete_flights_after'] = concrete_flights_after
         response['concrete_flights_before'] = concrete_flights_before
@@ -107,7 +144,8 @@ def index(request): # 个人中心，
 
         response['user'] = model_to_dict(user)
         response['status'] = 0
-        return JsonResponse(response)
+        return JsonResponse(response,safe=False)
+        # return HttpResponse(json.dumps(response),content_type="application/json")
     # return JsonResponse(json.dumps({'user':user_dict,'orders':orders},cls=DjangoJSONEncoder),safe=False)
     # return render(request, 'login/index.html')
 
@@ -235,7 +273,7 @@ def register(request):
                     response['msg'] = message = '相同的身份证号已经存在'
                     return JsonResponse(response)
                 same_phone_number_user= User.objects.filter(phone_number=phone_number)
-                if same_id_number_user:
+                if same_phone_number_user:
                     response['status'] = 8
                     response['msg'] = message = '相同的手机号已经存在'
                     return JsonResponse(response)
@@ -335,4 +373,5 @@ def send_email(email, code):
 
     msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
     msg.attach_alternative(html_content, "text/html")
-    msg.send
+    msg.send()
+

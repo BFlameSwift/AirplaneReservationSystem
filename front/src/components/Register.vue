@@ -31,28 +31,28 @@
       >
         用户名
       </h4>
-      <input v-model="location" class="info" style="top: 20%" />
+      <input v-model="username" class="info" style="top: 20%" />
       <!-- 密码 -->
       <h4
         style="color: rgb(0, 70, 132); position: absolute; left: 45%; top: 30%"
       >
         密码
       </h4>
-      <input v-model="destination" class="info" style="top: 40%" />
+      <input v-model="password" class="info" style="top: 40%" />
       <!-- 确认密码 -->
       <h4
         style="color: rgb(0, 70, 132); position: absolute; left: 45%; top: 50%"
       >
         确认密码
       </h4>
-      <input v-model="destination" class="info" style="top: 60%" />
+      <input v-model="conPassword" class="info" style="top: 60%" />
       <!-- 电子邮箱 -->
       <h4
         style="color: rgb(0, 70, 132); position: absolute; left: 45%; top: 70%"
       >
         电子邮箱
       </h4>
-      <input v-model="destination" class="info" style="top: 80%" />
+      <input v-model="email" class="info" style="top: 80%" />
     </div>
 
     <div class="verticle"></div>
@@ -65,7 +65,7 @@
       >
         *真实姓名
       </h4>
-      <input v-model="location" class="info" style="top: 20%" />
+      <input v-model="realname" class="info" style="top: 20%" />
       <!-- 性别 -->
       <h4
         style="color: rgb(0, 70, 132); position: absolute; left: 45%; top: 30%"
@@ -86,7 +86,7 @@
       >
         *身份证号
       </h4>
-      <input v-model="destination" class="info" style="top: 80%" />
+      <input v-model="Id" class="info" style="top: 80%" />
     </div>
     <!-- 注册 -->
     <button
@@ -99,6 +99,7 @@
         width: 300px;
         height: 60px;
       "
+      @click="register"
     >
       注册
     </button>
@@ -113,6 +114,7 @@
           name="birthday"
           class="input-primary"
           aria-invalid="true"
+          v-model="day"
         >
           <option value="">日</option>
           <option value="01">01</option>
@@ -157,6 +159,7 @@
           id="birthmonth"
           name="birthmonth"
           class="input-primary"
+          v-model="month"
         >
           <option value="">月</option>
           <option value="01">January</option>
@@ -182,6 +185,7 @@
           id="birthyear"
           name="birthyear"
           class="input-primary"
+          v-model="year"
         >
           <option value="">年</option>
           <option value="2021">2021</option>
@@ -298,6 +302,7 @@
           name="gender"
           id="male"
           type="radio"
+          @click="sex='male'"
         />
         <span variant="Variant1">男性</span>
       </label>
@@ -309,6 +314,7 @@
           name="gender"
           id="Female"
           type="radio"
+          @click="sex='female'"
         /><span>女性</span></label
       >
     </div>
@@ -318,7 +324,20 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      month:'',
+      day:'',
+      year:'',
+      sex:'',
+      username:'',
+      password:'',
+      conPassword:'',
+      email:'',
+      Id:'',
+      realname:'',
+      phoneNum:'18713100280',
+      date:'2001-3-8'
+    };
   },
   methods: {
     // mouseover(index){
@@ -327,6 +346,47 @@ export default {
     // mouseleave(index){
     //   this.style[index]=""
     // },
+    register(){
+      const formData = new FormData();
+      formData.append("real_name", this.realname)
+      formData.append("sex", this.sex)
+      formData.append("username", this.username)
+      formData.append("password1", this.password)
+      formData.append("password2", this.conPassword)
+      formData.append("email", this.email)
+      formData.append("Id_number", this.Id)
+      formData.append("phone_number", this.phoneNum)
+      formData.append("birthday", this.date)
+      console.log(this.username)
+      console.log(this.password)
+      console.log(this.Id)
+      console.log(this.conPassword)
+      console.log(this.email)
+      console.log(this.phoneNum)
+      console.log(this.realname)
+      console.log(this.sex)
+      this.$http.post('/api/register/', formData)
+        .then(result => {
+          if (result.data.status === 0) {
+            // eslint-disable-next-line no-undef
+            this.$message({
+              message: '成功！',
+              type: 'success'
+            });
+
+            window.sessionStorage.setItem('token',result.data.token);
+            this.$router.push('/personal')
+          } else {
+            // eslint-disable-next-line no-undef
+            alert(result.data.msg);
+          }
+          console.log(result.data)
+          this.msg = result.data.msg
+          console.log(result)
+          window.sessionStorage.setItem('token', result.data.token);
+
+        })
+    },
     search(){
       this.$router.push('/main')
     },

@@ -10,9 +10,9 @@
 
       <!-- 关闭 -->
       <img src="../assets/关闭.png" alt=""
-      @click="to_main"
+           @click="to_main"
 
-      style="cursor: pointer;position:absolute;right:30px;top:50px;width:30px;height:30px"/>
+           style="cursor: pointer;position:absolute;right:30px;top:50px;width:30px;height:30px"/>
 
       <!-- 登录按钮 -->
       <button
@@ -66,61 +66,83 @@
 export default {
   data() {
     return {
-      username:'',
-      pwd:'',
-      msg:''
+      username: '',
+      pwd: '',
+      msg: ''
     };
   },
-  methods:{
+  methods: {
     to_main: function () {
       this.$router.push("/main");
     },
     to_register: function () {
       this.$router.push("/register");
     },
-    login(){
+    login() {
       const formData = new FormData();
-      formData.append("username",this.username)
-      formData.append("password",this.pwd)
-      this.$http.post('/api/login/',formData)
-      .then(result=>{
-        if(result.data.status === 0){
-          this.$message.success('登录成功')
-          console.log(result.data.msg)
-          this.$router.push('/personal')
-        }
-        console.log(result.data)
-        this.msg = result.data.msg
-        console.log(result)
-        window.sessionStorage.setItem('token',result.data.token);
+      formData.append("username", this.username)
+      formData.append("password", this.pwd)
+      console.log(formData)
+      console.log(formData.username)
+      this.$http.post('/api/login/', formData)
+        .then(result => {
+          if (result.data.status === 0) {
+            // eslint-disable-next-line no-undef
+            this.$message({
+              message: '成功！',
+              type: 'success'
+            });
 
-      })
-      .catch(err=>{
-        console.log((err))
-      })
+            window.sessionStorage.setItem('token', result.data.token);
+            this.$router.push({
+              path: '/personal', query: {
+                username: 'jiawei',
+                realname: '丁家巍',
+                birthday: "2021-4-3",
+                sex: "男",
+                credit: "3",
+                email: "847638554"
+              }
+            })
+          } else {
+            // eslint-disable-next-line no-undef
+            alert(result.data.msg);
+          }
+          console.log(result.data)
+          this.msg = result.data.msg
+          console.log(result)
+          window.sessionStorage.setItem('token', result.data.token);
+
+        })
+        .catch(err => {
+          console.log((err))
+        })
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.introduce{
+.introduce {
   position: absolute;
-  width:380px;
+  width: 380px;
   left: 1200px;
   top: 340px;
   font-size: 30px;
   font-weight: 100;
 }
-.container{
+
+.container {
   position: absolute;
   width: 2000px;
   height: 1000px;
 }
+
 .title {
   position: absolute;
   font-size: 50px;
 }
+
 .line {
   position: absolute;
   left: 50%;
@@ -128,12 +150,14 @@ export default {
   height: 55%;
   border-right: 2px solid rgb(235, 226, 226);
 }
+
 .form {
   margin: 50px;
   position: absolute;
   left: 17%;
   top: 30%;
 }
+
 .row {
   margin-top: 50px;
   height: 26px;
@@ -141,11 +165,13 @@ export default {
   border-bottom: 2px solid #e8e8e8;
   width: 500px;
 }
+
 .input {
   position: relative;
   width: 500px;
   height: 50px;
 }
+
 .input input {
   position: absolute;
   bottom: 34px;
@@ -158,6 +184,7 @@ export default {
   outline: none;
   font-size: 20px;
 }
+
 .input label {
   position: absolute;
   bottom: -20px;
@@ -167,6 +194,7 @@ export default {
   color: #999;
   font-size: 20px;
 }
+
 .forget {
   position: absolute;
   left: 20%;
@@ -190,23 +218,29 @@ export default {
   z-index: 1;
   -moz-osx-font-smoothing: grayscale;
 }
+
 .button:focus {
   outline: none;
 }
+
 .button > span {
   vertical-align: middle;
 }
+
 /* Sizes */
 .button--size {
   font-size: 18px;
 }
+
 /* Typography and Roundedness */
 .button--text-thick {
   font-weight: 300;
 }
+
 .button--round-s {
   border-radius: 2px;
 }
+
 /* Wapasha */
 .button.button--login {
   background: #176c97;
@@ -214,16 +248,19 @@ export default {
   -webkit-transition: background-color 0.3s, color 0.3s;
   transition: background-color 0.3s, color 0.3s;
 }
+
 .button.button--join {
   background: #fff;
   color: #196c97;
   -webkit-transition: background-color 0.3s, color 0.3s;
   transition: background-color 0.3s, color 0.3s;
 }
+
 .button--login.button--inverted {
   background: #2d44a8;
   color: #fdfeff;
 }
+
 .button--login::before {
   content: "";
   position: absolute;
@@ -241,20 +278,24 @@ export default {
   -webkit-transition-timing-function: cubic-bezier(0.75, 0, 0.125, 1);
   transition-timing-function: cubic-bezier(0.75, 0, 0.125, 1);
 }
+
 .button--login:hover {
   background-color: #fff;
   color: #3f51b5;
 }
+
 .button--login.button--inverted:hover {
   background-color: #0d78ad;
   color: #fcfcfd;
 }
+
 // 加入按钮
 .button--join.button--inverted {
   background: #fdfeff;
-  border:1px solid #0d78ad;
+  border: 1px solid #0d78ad;
   color: #2d44a8;
 }
+
 .button--join::before {
   content: "";
   position: absolute;
@@ -272,10 +313,12 @@ export default {
   -webkit-transition-timing-function: cubic-bezier(0.75, 0, 0.125, 1);
   transition-timing-function: cubic-bezier(0.75, 0, 0.125, 1);
 }
+
 .button--join:hover {
   background-color: #fff;
   color: #3f51b5;
 }
+
 .button--join.button--inverted:hover {
   background-color: #0d78ad;
   color: #fcfcfd;
