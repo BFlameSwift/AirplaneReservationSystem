@@ -7,26 +7,6 @@
       width="100%"
       referrerPolicy="no-referrer"
     />
-    <img
-      :src="imgArr[index]"
-      alt=""
-      height="100%"
-      width="100%"
-      referrerPolicy="no-referrer"
-    />
-    <!-- 左箭头 -->
-    <a href="javascript:void(0)" v-show="index != 0" @click="prev" class="left">
-      <img src="../assets/prev.png" alt="" />
-    </a>
-    <!-- 右箭头 -->
-    <a
-      href="javascript:void(0)"
-      v-show="index < imgArr.length - 1"
-      @click="next"
-      class="right"
-    >
-      <img src="../assets/next.png" alt="" />
-    </a>
     <!-- 标签栏 -->
 
     <div class="head">
@@ -35,30 +15,33 @@
         alt=""
         style="position: absolute; left: 364px; top: 13px; width: 250px"
       />
-      <hr class="hr" color="#e8e8e8" />
+      <hr class="hr" color="#e8e8e8"/>
       <a class="line" style="left: 18%">查询</a>
       <a class="line" @click="manage" style="left: 27%">管理</a>
       <a class="line" @click="help" style="left: 36%">帮助</a>
       <a class="line" @click="book" style="left: 45%">预定</a>
-      <!-- 登录 -->
+      <div v-if="isLogin===0">
+        <div class="to_login" @click="toRegister" style="bottom: 0%; right: 3%">
+          <p>注册</p>
+        </div>
+        <div class="to_login" @click="toLogin" style="bottom: 0%; right: 6%">
+          <p>登录</p>
+        </div>
+      </div>
+      <div v-if="isLogin!==0">
+        <div class="to_login" @click="toPersonal" style="bottom: 0%; right: 3%">
+          <p>您好，{{ username }}</p>
+        </div>
+      </div>
 
-      <div class="to_login" @click="toRegister" style="bottom: 0%; right: 3%">
-        <p>注册</p>
-      </div>
-      <div class="to_login" @click="toLogin" style="bottom: 0%; right: 6%">
-        <p>登录</p>
-      </div>
     </div>
 
     <!-- 查询栏 -->
     <div class="login_box">
       <div class="title_on" style="top: 10%; left: 3%">
-        <p>航班</p>
+        <p>查询航班</p>
       </div>
-      <div class="title_off" style="top: 10%; left: 10%">
-        <p>航班+酒店</p>
-      </div>
-      <div class="search">
+      <div class="search" @click="search">
         <img
           src="../assets/搜索.png"
           alt=""
@@ -77,9 +60,8 @@
       <div class="dropdown" style="top: 68%;">
         <button class="dropbtn" v-text="seat"></button>
         <div class="dropdown-content">
-          <a @click="seat='头等舱'">头等舱</a>
-          <a @click="seat='经济舱'">经济舱</a>
-          <a @click="seat='商务舱'">商务舱</a>
+          <a @click="seat='大于30kg'">大于30kg</a>
+          <a @click="seat='小于30kg'">小于30kg</a>
         </div>
       </div>
       <!-- 人数选择 -->
@@ -94,20 +76,22 @@
       </div>
 
       <img src="../assets/箭头.png" alt=""
-      style="position:absolute;width: 20px;left:180px;top:162px">
+           style="position:absolute;width: 20px;left:180px;top:162px">
       <!-- 日期 -->
       <div class="date">
-        <h3 class="month">{{ month }}</h3>
-        <font size="7" color="#ce0000" class="day">{{ date }}</font>
+        <date-picker style="position:absolute;height: 100%;width: 100%;color: transparent;" v-model=date type="date"
+                     :min="min" :max="max" :hide-icon="true"/>
+        <h3 class="month">{{ match[(new Date(date)).getMonth()] }}</h3>
+        <font size="7" color="#ce0000" class="day">{{ (new Date(date)).getDate() }}</font>
       </div>
 
       <!-- 登陆表单区域 -->
-      <div label-width="10px" class="login_form" >
+      <div label-width="10px" class="login_form">
         <!-- 标签 -->
         <!-- 出发地 -->
 
         <input
-          v-model="location"
+          v-model="departure"
           style="
             height: 50px;
             width: 360px;
@@ -140,13 +124,21 @@
 </template>
 
 <script>
+import DatePicker from '@hyjiacan/vue-datepicker'
+import '@hyjiacan/vue-datepicker/dist/datepicker.css'
+
 export default {
+  components: {DatePicker},
   data() {
     return {
-      destination: "",
-      location: "",
+      date: new Date(),
+      min: '2021-6-8',
+      max: '2022-12-12',
+      destination: '',
+      departure: '',
       month: "May",
-      date: 19,
+      day: 19,
+      isLogin: 0,
       imgArr: [
         require("../assets/1.jpg"),
         require("../assets/2.jpg"),
@@ -156,15 +148,78 @@ export default {
         require("../assets/6.jpg"),
         require("../assets/7.jpg"),
       ],
+      match: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
       index: 1,
       // style: ['','','','','',''],
-      value1: "",
-      value2: "",
-      passen:"乘客类型",
-      seat:"座位类型"
+      value1: '',
+      value2: '',
+      passen: "乘客类型",
+      seat: "行李重量",
+      username: ''
     };
   },
+  created: function () {
+    let d = new Date();
+    const Str = window.sessionStorage.getItem('token')
+    if (Str) this.isLogin = 1;
+    else this.isLogin = 0;
+    if (this.isLogin === 1) {
+      this.$http.get('/index/').then(result => {
+        this.username = result.data.user.name;
+      })
+    }
+
+  },
+  mounted: function () {
+    this.fun();
+  },
   methods: {
+    search() {
+      const formData = new FormData();
+      formData.append("origination", this.departure)
+      formData.append("destination", this.destination)
+      const d = new Date(this.date)
+      const a = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
+      formData.append("date", a)
+      console.log(formData)
+      console.log(a)
+      console.log(this.departure)
+      console.log(this.destination)
+      this.$http.post('/api/query_flight/', formData)
+        .then(result => {
+          if (result.data.status === 0) {
+            if (this.departure !== '') {
+              if (this.destination !== '') {
+                console.log(JSON.parse(result.data.flight_list))
+                this.$router.push({path: '/displayFlight', query: {mylist: result.data.flight_list}})
+              }
+            } else {
+              console.log(this.destination.length)
+              console.log(this.departure.length)
+              this.$alert('请填写完整', '查询失败', {
+                confirmButtonText: '确定',
+              });
+            }
+
+          } else {
+            // eslint-disable-next-line no-undef
+            this.$alert(result.data.msg, '查询失败', {
+              confirmButtonText: '确定',
+            });
+          }
+          console.log(result.data)
+          this.msg = result.data.msg
+
+        })
+    },
+    fun: function () {
+      //setInterval(函数体,时间)
+      setInterval(this.play, 3000)
+    },
+    play: function () {
+      this.index++;
+      this.index %= 7;
+    },
     prev: function () {
       this.index--;
       console.log(this.index);
@@ -185,17 +240,29 @@ export default {
     toRegister: function () {
       this.$router.push("/register");
     },
-    manage(){
+    toPersonal: function () {
+      this.$router.push("/personal");
+    },
+    manage() {
       this.$router.push('/personal')
     },
-    help(){
+    help() {
       this.$router.push('/personal')
     },
-    book(){
+    book() {
       this.$router.push('/personal')
-    }
-  },
-};
+    },
+    //   todisplayFlight:function(){
+    //     console.log("xxx")
+    //     this.$router.push(
+    //       {
+    //         path:'/displayFlight',query:{}
+    //       }
+    //     )
+    //   }
+    // },
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -203,12 +270,15 @@ body {
   height: 100%;
   width: 100%;
 }
+
 input {
   border-radius: 5px;
 }
+
 img {
   border-radius: 5px;
 }
+
 .to_login {
   position: absolute;
   font-size: 15px;
@@ -216,9 +286,10 @@ img {
   color: #54545e;
   cursor: pointer;
 }
+
 .line {
   position: absolute;
-  bottom: 7%;
+  bottom: 9%;
   font-size: 20px;
   /* color: black; */
   color: #54545e;
@@ -231,15 +302,18 @@ img {
   color: black;
   top: 0%;
   height: 16%;
+  min-height: 165px;
   width: 100%;
 }
+
 .input-with-select .el-input-group__prepend {
   background-color: #fff;
 }
 
 .login_container {
-  background-color: #2b4b6b;
+  background-color: #fff;
   height: 100%;
+
 }
 
 .search {
@@ -252,6 +326,7 @@ img {
   border: 1px solid #eee;
   border-radius: 10px;
 }
+
 .login_box {
   width: 900px;
   height: 270px;
@@ -264,6 +339,7 @@ img {
   box-shadow: 2px 2px 5px #000;
   transform: translate(-50%, -50%);
 }
+
 .avator_box {
   height: 130px;
   width: 130px;
@@ -276,6 +352,7 @@ img {
   transform: translate(-50%, -50%);
   background-color: #fff;
 }
+
 .login_form {
   position: absolute;
   bottom: 40%;
@@ -283,15 +360,17 @@ img {
   height: 20%;
   padding: 0 10px;
 }
+
 .date {
   position: absolute;
   top: 40%;
-  left: 45%;
+  left: 47%;
   height: 47%;
-  width: 20%;
+  width: 17%;
   border-radius: 5px;
   border: 0.3px solid #adadad;
 }
+
 .day {
   position: absolute;
   writing-mode: lr-tb;
@@ -300,6 +379,7 @@ img {
   transform: translate(-50%);
   padding: 0px 10px;
 }
+
 .month {
   position: absolute;
   writing-mode: lr-tb;
@@ -317,6 +397,7 @@ img {
   position: relative;
   margin: 30px auto;
 }
+
 .icon-search:after {
   content: "";
   -webkit-transform: rotate(45deg);
@@ -329,6 +410,7 @@ img {
   left: 11px;
   background-color: currentcolor;
 }
+
 .title_on {
   position: absolute;
   font-size: 20px;
@@ -341,6 +423,7 @@ img {
   color: #3399ff;
   cursor: pointer;
 }
+
 .title_off {
   position: absolute;
   font-size: 20px;
@@ -350,20 +433,24 @@ img {
   color: black;
   cursor: pointer;
 }
+
 .left {
   position: absolute;
   top: 50%;
   left: 4%;
 }
+
 .right {
   position: absolute;
   top: 50%;
   right: 4%;
 }
+
 .hr {
   position: relative;
   margin-top: 110px;
 }
+
 /* 下拉按钮样式 */
 .dropbtn {
   background-color: #ffffff;
@@ -374,6 +461,7 @@ img {
   border: none;
   cursor: pointer;
 }
+
 /* 容器 <div> - 需要定位下拉内容 */
 .dropdown {
   position: absolute;

@@ -94,19 +94,12 @@ export default {
             });
 
             window.sessionStorage.setItem('token', result.data.token);
-            this.$router.push({
-              path: '/personal', query: {
-                username: 'jiawei',
-                realname: '丁家巍',
-                birthday: "2021-4-3",
-                sex: "男",
-                credit: "3",
-                email: "847638554"
-              }
-            })
+            this.$router.go(-1);
           } else {
             // eslint-disable-next-line no-undef
-            alert(result.data.msg);
+            this.$alert(result.data.msg, '登陆失败', {
+              confirmButtonText: '确定',
+            });
           }
           console.log(result.data)
           this.msg = result.data.msg

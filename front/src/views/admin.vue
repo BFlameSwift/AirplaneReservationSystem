@@ -1,20 +1,18 @@
 <template>
-  <div style="width: 2000px; height: 1000px">
-    <div>
+  <div style="position:absolute;width: 2000px; height: 1000px;min-height: 1000px">
       <div class="head">
-        <img
-          src="../assets/logox.png"
-          alt=""
-          style="position: absolute; left: 364px; top: 13px; width: 250px"
-        />
-        <hr class="hr" color="#e8e8e8" />
-        <hr class="hr_bottom" color="#e8e8e8" />
-        <a class="line" @click="search" style="left: 18%">查询</a>
-        <a class="line" @click="manage" style="left: 27%">管理</a>
-        <a class="line" @click="help" style="left: 36%">帮助</a>
-        <a class="line" @click="book" style="left: 45%">预定</a>
-        <!-- 登录 -->
-      </div>
+      <img
+        src="../assets/logox.png"
+        alt=""
+        style="position: absolute; left: 364px; top: 13px; width: 250px"
+      />
+      <hr class="hr" color="#e8e8e8"/>
+      <hr class="hr_bottom" color="#e8e8e8"/>
+      <a class="line" @click="search" style="left: 18%">查询</a>
+      <a class="line" @click="manage" style="left: 27%">管理</a>
+      <a class="line" @click="help" style="left: 36%">帮助</a>
+      <a class="line" @click="book" style="left: 45%">预定</a>
+      <!-- 登录 -->
     </div>
     <div style="margin-top: 200px; background: #fff; height: 80%">
       <el-select
@@ -86,6 +84,18 @@ export default {
       this.$router.push("/addFlight");
       console.log("xxxx");
     },
+    search() {
+      this.$router.push('/main')
+    },
+    manage() {
+      this.$router.push('/personal')
+    },
+    help() {
+      this.$router.push('/personal')
+    },
+    book() {
+      this.$router.push('/personal')
+    }
   },
 };
 </script>
@@ -96,12 +106,28 @@ export default {
 }
 .line {
   position: absolute;
-  top: 70%;
+  bottom: 7%;
   font-size: 20px;
   /* color: black; */
   color: #54545e;
   cursor: pointer;
 }
+.head {
+  position: absolute;
+  background-color: #ffffff;
+  color: black;
+  top: 0%;
+  height: 16%;
+  width: 100%;
+  min-height: 165px;
+  min-width: 800px;
+}
+
+.hr {
+  position: relative;
+  margin-top: 110px;
+}
+
 .hr_bottom {
   position: relative;
   margin-top: 50px;

@@ -13,7 +13,6 @@
       <a class="line" @click="manage" style="left: 27%">管理</a>
       <a class="line" @click="help" style="left: 36%">帮助</a>
       <a class="line" @click="book" style="left: 45%">预定</a>
-
       <div class="to_login" @click="exit" style="bottom: 0%; right: 6%">
         <p>退出</p>
       </div>
@@ -28,112 +27,18 @@
         left: 370px;
         color: rgb(0, 70, 132);
       "
-      >您好 {{ username }}，欢迎访问</a
-    >
-    <a
-      class="title"
-      style="
-        position: absolute;
-        font-size: 30px;
-        top: 33%;
-        left: 370px;
-        color: rgb(0, 70, 132);
-      "
-      >我的账户</a
-    >
-    <!-- 账户表单 -->
-    <div class="table_basic">
-      <div
-        style="
-          border-top: 0.1rem solid #0293db;
-          width: 800px;
-          height: 100px;
-        "
-      >
-        <p class="tit">用户名</p>
-        <p class="personaldata">{{ username }}</p>
-      </div>
-      <div
-        style="
-          border-top: 0.1rem solid #e8e8e8;
-          width: 800px;
-          height: 100px;
-        "
-      >
-        <p class="tit">电子邮件地址</p>
-        <p class="personaldata" >{{email}}</p>
-      </div>
-      <div
-        style="
-          border-bottom: 0.1rem solid #004684;
-          border-top: 0.1rem solid #e8e8e8;
-          width: 800px;
-          height: 100px;
-        "
-      >
-        <p class="tit">信用等级</p>
-        <p class="personaldata">{{ credit }}</p>
-      </div>
-    </div>
-
-    <!-- 其他信息 -->
-    <a
-      class="title"
-      style="
-        position: absolute;
-        font-size: 30px;
-        top: 76%;
-        left: 370px;
-        color: rgb(0, 70, 132);
-      "
-      >其他信息</a
-    >
-    <div class="table_info">
-      <div
-        style="
-          border-top: 0.1rem solid #0293db;
-          width: 800px;
-          height: 100px;
-        "
-      >
-        <p class="tit">性别</p>
-        <p class="personaldata">{{ sex }}</p>
-      </div>
-      <div
-        style="
-          border-top: 0.1rem solid #e8e8e8;
-          width: 800px;
-          height: 100px;
-        "
-      >
-        <p class="tit">生日</p>
-        <p class="personaldata">{{ birthday }}</p>
-      </div>
-      <div
-        style="
-          border-bottom: 0.1rem solid #004684;
-          border-top: 0.1rem solid #e8e8e8;
-          width: 800px;
-          height: 100px;
-        "
-      >
-        <p class="tit">真实姓名</p>
-        <p class="personaldata">{{ realname }}</p>
-      </div>
-    </div>
-
-    <div class="table_margin"></div>
-
-    <!-- menu菜单 -->
+      >更新用户信息</a>
+       <!-- menu菜单 -->
     <button
       type="button"
-      class="button button--login button--round-s button--text-thick button--beforeinverted button--size"
+      class="button button--login button--round-s button--text-thick button--inverted button--size"
       style="
         position: absolute;
         left: 1400px; top: 360px;
         width: 400px;
         height: 60px;
       "
+       @click="toPersonal"
     >
       我的帐户
     </button>
@@ -165,17 +70,30 @@
     </button>
     <button
       type="button"
-      class="button button--login button--round-s button--text-thick button--inverted button--size"
+      class="button button--login button--round-s button--text-thick button--beforeinverted button--size"
       style="
         position: absolute;
         left: 1400px; top: 540px;
         width: 400px;
         height: 60px;
       "
-      @click="toUpdate"
     >
       更新个人信息
     </button>
+    <div>
+        <div style="margin-top:350px;margin-left:300px">
+               <p class="tit">用户名</p>
+              <input v-model="username" style="width:30%;">
+              <p class="tit" style="margin-top:50px">电子邮件地址</p>
+              <input v-model="email" style="width:30%;">
+              <p class="tit" style="margin-top:50px">性别</p>
+              <el-radio v-model="sex" label="male" style="margin-top:10px;margin-bottom:10px" size="medium">男</el-radio>
+            <el-radio v-model="sex" label="female">女</el-radio>
+            <p class="tit" style="margin-top:50px">出生日期</p>
+               <el-date-picker type="date" placeholder="选择出生日期" style="margin-top:30px;margin-bottom:30px" v-model="birthday"></el-date-picker>
+         </div>
+         <button class="btn" style="margin-left:300px;margin-top:50px" @click="update">确认修改</button>
+    </div>
   </div>
 </template>
 
@@ -184,28 +102,49 @@ export default {
   data() {
     return {
       username: "",
-      realname: "",
-      birthday: "",
-      sex: "",
-      credit: "",
-      email: ""
+      birthday:"",
+      sex:"",
+      email:"",
     };
   },
-  created(){
-    this.$http.get('/index/').then(result => {
-      console.log(result)
-      console.log(result.status)
-      console.log(result.data.user.name)
-      this.username=result.data.user.name;
-      this.realname=result.data.user.real_name;
-      this.birthday=result.data.user.birthday;
-      this.sex=result.data.user.sex==='male'?'男':'女';
-      this.credit=result.data.user.credit_rating;
-      this.email=result.data.user.email;
-    })
 
-    },
   methods: {
+    update:function(){
+const formData = new FormData();
+      formData.append("real_name", this.realname)
+      formData.append("sex", this.sex)
+      formData.append("username", this.username)
+      formData.append("password1", this.password)
+      formData.append("password2", this.conPassword)
+      formData.append("email", this.email)
+      formData.append("Id_number", this.Id)
+      formData.append("phone_number", this.phoneNum)
+      formData.append("birthday", this.date)
+      console.log(this.username)
+      console.log(this.password)
+      console.log(this.Id)
+      console.log(this.conPassword)
+      console.log(this.email)
+      console.log(this.phoneNum)
+      console.log(this.realname)
+      console.log(this.sex)
+      this.$http.post('/index/', formData)
+        .then(result => {
+          if (result.data.status === 0) {
+            // eslint-disable-next-line no-undef
+            this.$message({
+              message: '成功！',
+              type: 'success'
+            });
+            // this.$router.push({path:'/personal',query:{list:result.data.concrete_flights_before}})
+          } else {
+            // eslint-disable-next-line no-undef
+            this.$alert(result.data.msg, '更新失败', {
+              confirmButtonText: '确定',
+            });
+          }
+        })
+    },
     prev: function () {
       this.index--;
       console.log(this.index);
@@ -220,20 +159,21 @@ export default {
     // mouseleave(index){
     //   this.style[index]=""
     // },
-    toFutureFlight:function(){
-      this.$router.push({path:'/futureFlight',query:{}})
-    },
-    toHistoryFlight:function(){
-      this.$router.push("/historyFlight");
-    },
-    toUpdate:function(){
-      this.$router.push({path:'/update',query:{}})
-    },
+
     toLogin: function () {
       this.$router.push("/login");
     },
     toRegister: function () {
       this.$router.push("/register");
+    },
+    toPersonal:function(){
+      this.$router.push("/personal");
+    },
+     toFutureFlight:function(){
+      this.$router.push({path:'/futureFlight',query:{}})
+    },
+    toHistoryFlight:function(){
+      this.$router.push("/historyFlight");
     },
     search(){
       this.$router.push('/main')
@@ -248,8 +188,6 @@ export default {
       this.$router.push('/personal')
     },
     exit(){
-      this.$http.get('/api/logout/')
-      sessionStorage.clear()
       this.$router.push('/main')
     }
   },
@@ -257,6 +195,22 @@ export default {
 </script>
 
 <style lang="less" scoped>
+input{
+    border-radius: 0;
+    margin-left:0;
+    border-top:0;
+    border-left:0;
+    border-right:0;
+    border-bottom: 2px solid #dbdbdb;
+    height: 40px;
+    outline: none;
+    font-size: 17px;
+}
+.tit {
+  font-size: 20px;
+  font-weight: bold;
+  color: #80808f;
+}
 .personal_container {
   background-color: white;
   position: absolute;
@@ -390,5 +344,23 @@ export default {
   border: transparent;
   background: #ebebee;
   color: #37699b;
+}
+.btn{
+    position: relative;
+    width: 100px;
+    height: 50px;
+    border: none;
+    background: #2E5C99;
+    color: #fff;
+    -webkit-transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 300;
+    border-radius: 1px;
+    font-size: 16px;
+}
+.btn:hover{
+   background-color: #2671D3;
+    color: #fcfcfd;
 }
 </style>

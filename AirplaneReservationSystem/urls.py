@@ -44,6 +44,8 @@ urlpatterns = [
     path('api/book_ticket/',kernel.views.book_ticket),
     path('api/cancel_ticket/',kernel.views.cancel_ticket),
 
+    path('api/getdate/',kernel.views.get_date),
+
     path('api/pay/', kernel.views.paysView, name='pays'),
     # TODO 支付后返回的url
 

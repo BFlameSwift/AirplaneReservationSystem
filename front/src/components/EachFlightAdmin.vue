@@ -1,4 +1,5 @@
 <template>
+  <template>
     <div style="width:1000px;height:160px;background:white">
         <div class="frame">
             <label style="font-size:15px;font-weight:50">航班号:</label>
@@ -23,8 +24,8 @@
             <input v-model="mid" style="width:10%;margin-left:1%">
             <label style="font-size:15px;font-weight:50;margin-left:5%">头等舱价格:</label>
             <input v-model="high" style="width:10%;margin-left:1%">
-            <button style="margin-left:180px;width:60px;margin-top:10px" class="blueb">修改</button>
-            <button style="margin-left:10px;width:60px;margin-top:10px" class="redb">删除</button>
+            <button style="margin-left:145px;width:60px;margin-top:10px" class="blueb">修改</button>
+            <button style="margin-left:15px;width:60px;margin-top:10px" class="redb">删除</button>
         </div>
     </div>
 </template>
@@ -64,10 +65,11 @@ input{
     height:100%;
     border:2px solid #e2d7d7;
     box-shadow:0px 0px 8px rgb(197, 192, 182);
+    margin-top: 20px;
 }
 .blueb{
     position: relative;
-    width: 100px; 
+    width: 100px;
     height: 50px;
     border: none;
     background: #2E5C99;
@@ -86,7 +88,7 @@ input{
 }
 .redb{
     position: relative;
-    width: 100px; 
+    width: 100px;
     height: 50px;
     border: none;
     background: #ff0808;

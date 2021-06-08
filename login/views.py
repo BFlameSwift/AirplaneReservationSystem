@@ -105,29 +105,32 @@ def index(request): # 个人中心，
             i += 1
         i=0
         for order in orders_after:
-            flight_dict = model_to_dict(order.flight)
+            if order.order_is_valid:
+                flight_dict = model_to_dict(order.flight)
 
-            concrete_flight_dict = model_to_dict(order.concrete_flight)
-            flights_after.update({'flight{}'.format(i): flight_dict})
-            print('flight{}'.format(i))
-            concrete_flights_before.update({'concrete_flight{}'.format(i): concrete_flight_dict})
-            i += 1
-            mydict = {}
-            mydict['order_id'] = order.order_number
-            mydict['flight_number'] = order.flight.flight_number
-            mydict['valid'] = order.order_is_valid
-            mydict['origination'] = str(order.flight.origination)
-            mydict['destination'] = str(order.flight.destination)
-            mydict['departure_airport'] = str(order.flight.departure_airport)
-            mydict['landing_airport'] = str(order.flight.landing_airport)
-            mydict['starting_time'] = order.flight.starting_time.strftime("%H:%M:%S")
-            mydict['flight_time'] = order.flight.flight_time.strftime("%H:%M:%S")
-            mydict['arrival_time'] = order.flight.arrival_time.strftime("%H:%M:%S")
-            mydict['date'] = order.concrete_flight.flight_datetime.strftime('%Y-%m-%d')
-            mydict['price'] = order.price
-            mydict['flight_type'] = order.flight_type
+                concrete_flight_dict = model_to_dict(order.concrete_flight)
+                flights_after.update({'flight{}'.format(i): flight_dict})
+                print('flight{}'.format(i))
+                concrete_flights_before.update({'concrete_flight{}'.format(i): concrete_flight_dict})
+                i += 1
 
-            show_order_after.append(mydict)
+                mydict = {}
+
+                mydict['order_id'] = order.order_number
+                mydict['flight_number'] = order.flight.flight_number
+                mydict['valid'] = order.order_is_valid
+                mydict['origination'] = str(order.flight.origination)
+                mydict['destination'] = str(order.flight.destination)
+                mydict['departure_airport'] = str(order.flight.departure_airport)
+                mydict['landing_airport'] = str(order.flight.landing_airport)
+                mydict['starting_time'] = order.flight.starting_time.strftime("%H:%M:%S")
+                mydict['flight_time'] = order.flight.flight_time.strftime("%H:%M:%S")
+                mydict['arrival_time'] = order.flight.arrival_time.strftime("%H:%M:%S")
+                mydict['date'] = order.concrete_flight.flight_datetime.strftime('%Y-%m-%d')
+                mydict['price'] = order.price
+                mydict['flight_type'] = order.flight_type
+
+                show_order_after.append(mydict)
 
         response['orders_after'] = json.loads(serializers.serialize("json",orders_after))
         response['orders_before'] = json.loads(serializers.serialize("json",orders_before))

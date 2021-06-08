@@ -203,7 +203,7 @@ def produce_flight_from_date_to_date(flight,start,end):
         new_flight.flight = flight
         new_flight.book_sum = 0
         new_flight.plane_capacity = flight.plane_capacity
-        time = flight.flight_time
+        time = flight.starting_time
         # time = datetime.time()
         new_flight.flight_datetime = datetime.datetime(
             year=date.year,month=date.month,day=date.day,

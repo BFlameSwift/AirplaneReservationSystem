@@ -1,5 +1,5 @@
 import datetime
-
+from django.core import serializers
 from django.db.models import Min, Count, Max
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
@@ -17,13 +17,13 @@ from background.models import Flight,Order,Concrete_flight,FlightSeatingChart
 from login.models import User
 from .pays import get_pay
 
-
+from login.views import response
 @csrf_exempt
 def query_flight(request):
     message = '请输入航班信息'
-    response = {}
+
     if request.method == 'POST':
-        print('is post')
+
         query_flight_form = forms.QueryFlightForm(request.POST)
         message = '您输入的路线暂无航班直飞，请重新输入'
         # print(query_flight_form)
@@ -31,11 +31,56 @@ def query_flight(request):
         if query_flight_form.is_valid():
             origination = query_flight_form.cleaned_data.get('origination')
             destination = query_flight_form.cleaned_data.get('destination')
-            flight_list = Flight.objects.filter(origination=origination,destination=destination)
-            response['flight_list'] = flight_list
-            #TODO 可能会有bug
-            response['status'] = 1
+            date_str = query_flight_form.cleaned_data.get('date')
+
+            year, mouth, day = map(int, date_str.split('-'))
+            the_date = datetime.date(year, mouth, day)
+
+
+
+            datetime_begin = datetime.datetime(
+                the_date.year,the_date.month,the_date.day
+                ,0,0,0
+            )
+            oneday = datetime.timedelta(days=11)
+            datetime_end  = datetime.datetime(
+                the_date.year, the_date.month, the_date.day
+                , 23, 59, 59
+            )
+            concrete_flight_set = Concrete_flight.objects.filter(flight_datetime__gte=datetime_begin,flight_datetime__lte=datetime_end)
+            flight_set = Flight.objects.filter(origination=origination,destination=destination)
+            response['flight_set'] = json.loads(serializers.serialize("json",flight_set))
+            response['concrete_flight_set'] = json.loads(serializers.serialize("json",concrete_flight_set))
+            flight_list = []
+            for concrete_flight in concrete_flight_set:
+                my_dict = {}
+                my_dict['flight_time'] = str(concrete_flight.flight.flight_time)
+                my_dict['starting_time'] =str(concrete_flight.flight.starting_time)
+                my_dict['arrival_time'] =str(concrete_flight.flight.arrival_time)
+                my_dict['departure_airport'] =concrete_flight.flight.departure_airport
+                my_dict['landing_airport'] =concrete_flight.flight.landing_airport
+                my_dict['first_class_price'] =concrete_flight.flight.first_class_price
+                my_dict['business_class_price'] =concrete_flight.flight.business_class_price
+                my_dict['economy_class_price'] =concrete_flight.flight.economy_class_price
+                my_dict['flight_number'] =concrete_flight.flight.flight_number
+                my_dict['concrete_flight_id'] = concrete_flight.id
+                my_dict['origination'] = concrete_flight.flight.origination
+                my_dict['destination'] = concrete_flight.flight.destination
+                my_dict['date'] = date_str
+                flight_list.append(my_dict)
+            if flight_list.__len__() == 0:
+                response['status'] = 1
+                response['msg'] = '当日无航班直飞，请选择其他日期'
+                print(locals())
+                return JsonResponse(response)
+
+
+            response['flight_list'] = json.dumps(flight_list,ensure_ascii=False)
+                #TODO 可能会有bug
+            response['status'] = 0
+            response['msg'] = '查找成功'
             print(locals())
+            return JsonResponse(response)
             # flight_list 返回的航班，可以直接输出
 
             # return render(request, 'list_employee.html', locals())
@@ -71,94 +116,115 @@ def query_flight(request):
 @csrf_exempt
 def book_ticket(request):
 
-#TODO 新建订单是如果要预订的机票的飞行时间中已经订过冲突航班了就提示
+# Done 新建订单是如果要预订的机票的飞行时间中已经订过冲突航班了就提示
 # 不能同一个人选择同一时间的同一航班 Done
 # Done 测试信用评价成功
-# TODO 高信用等级打折
-    response = {}
+# Done 高信用等级打折
+
+
     if not request.session.get('is_login', None):
 
         response['msg'] = message = '您尚未登录'
         response['status'] = -1
         return redirect('/login/')
     if request.method == 'POST':
-        username = request.session.get('user_name')
-        user = User.objects.get(name=username)
-        user_dict = model_to_dict(user)
-        response['user'] = user_dict
-        if not setting_credit(user): # 函数在下面
-            response['msg'] = message = '您的信用等级较低，无法订票'
-            response['status'] = 1
-            return JsonResponse(response)
+        # username = request.session.get('user_name')
             # return render(request, 'book_ticket.html', locals())
+        book_ticket_form = forms.BookTicketForm(request.POST)
+        if book_ticket_form.is_valid():
+            money = float(book_ticket_form.cleaned_data.get('money'))
+            # money = float(request.POST.get('money'))
+            flight_number = book_ticket_form.cleaned_data.get('flight_number')
+            date_str = book_ticket_form.cleaned_data.get('date')
+            Id_number =  book_ticket_form.cleaned_data.get('Id_number')
+            real_name =  book_ticket_form.cleaned_data.get('real_name')
+            print(date_str)
+            year,mouth,day = map(int,date_str.split('-'))
+            date = datetime.date(year,mouth,day)
 
-        money = float(request.POST.get('money'))
-        flight_number = request.POST.get('flight_number')
-        date_str = str(request.POST.get('date'))
-        year,mouth,day = map(int,date_str.split('-'))
-        date = datetime.date(year,mouth,day)
+            user = User.objects.get(Id_number=Id_number)
+            user_dict = model_to_dict(user)
+            response['user'] = user_dict
+            if not setting_credit(user):  # 函数在下面
+                response['msg'] = message = '您的信用等级较低，无法订票'
+                response['status'] = 1
+                return JsonResponse(response)
 
-
-        print(money,flight_number,date)
-        try:
-            flight = Flight.objects.get(flight_number = flight_number)
-            response['flight'] = model_to_dict(flight)
-            the_datetime = datetime.datetime(
-                date.year,date.month,date.day,
-                flight.flight_time.hour,flight.flight_time.minute,flight.flight_time.second
-            )
-            # the_datetime.date = date
-            # the_datetime.time = flight.flight_time
-            concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
-            response['concrete_flight'] = model_to_dict(concrete_flight  )
-            response['the_datetime'] = the_datetime
-
-            # 同一个人不能买一个机票两次
+            print(money,flight_number,date)
             try:
-                order = Order.objects.get(user=user,flight_datetime=the_datetime,order_is_valid=True)
-                response['msg'] = message = '您已经预订过本次航班，请勿重复订购'
-                response['order'] = model_to_dict(order)
-                response['status'] = 2
+
+                flight = Flight.objects.get(flight_number = flight_number)
+                response['flight'] = model_to_dict(flight)
+                the_datetime = datetime.datetime(
+                    date.year,date.month,date.day,
+                    flight.starting_time.hour,flight.starting_time.minute,flight.starting_time.second
+                )
+
+                print(the_datetime)
+                # the_datetime.date = date
+                # the_datetime.time = flight.flight_time
+                concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
+                response['concrete_flight'] = model_to_dict(concrete_flight  )
+                response['the_datetime'] = the_datetime
+
+                # 同一个人不能买一个机票两次
+                try:
+                    user = User.objects.get(Id_number = Id_number)
+                    order = Order.objects.get(user=user,flight_datetime=the_datetime,order_is_valid=True)
+                    response['msg'] = message = '您已经预订过本次航班，请勿重复订购'
+                    response['order'] = model_to_dict(order)
+                    response['status'] = 2
+                    return JsonResponse(response)
+                    # return render(request, 'book_ticket.html', locals())
+                except User.DoesNotExist:
+                    response['msg'] = message = '系统中无此身份证号，请检查输入'
+                    response['status'] = 8
+                    return JsonResponse(response)
+                except Exception as e:
+                    pass
+                    # 找不到订单就对了
+                if user.real_name != real_name:
+                    response['msg'] = message = '身份证号姓名与输入姓名不匹配，请重新输入'
+                    response['status'] = 7
+                    return JsonResponse(response)
+
+                if concrete_flight.book_sum >= concrete_flight.plane_capacity :
+                    response['status'] = 3
+                    response['msg'] = message = '航班已满，请乘坐其他航班'
+                    return JsonResponse(response)
+                    # return render(request, 'book_ticket.html', locals())
+
+                # if user.balance < money:
+                #     # message = '余额不足，请充值，或请您选择是否支付宝付全款'
+                #     response['status'] = 4
+                #     response['msg'] = message = '余额不足，请使用支付宝充值'
+                #     # TODO 选择
+                #     return JsonResponse(response)
+                #     # return render(request, 'book_ticket.html', locals()) # 此时应还有个充值按钮
+
+                # 所以这里使用函数来支付，因为当上面选择支付宝支付的时候也是成功支付了
+                print(concrete_flight)
+                pay_ticket(user, flight, date, money)
+                print('after')
+                response['msg'] = message = '支付成功'
+                response['status'] = 0
+                print(message)
                 return JsonResponse(response)
                 # return render(request, 'book_ticket.html', locals())
 
-            except Exception as e:
-                pass
-                # 找不到订单就对了
-
-            if concrete_flight.book_sum >= concrete_flight.plane_capacity :
-                response['status'] = 3
-                response['msg'] = message = '航班已满，请乘坐其他航班'
+            except Flight.DoesNotExist:
+                response['msg'] = message = '航班不存在，请重新选择航班'
+                response['status'] = 6
                 return JsonResponse(response)
                 # return render(request, 'book_ticket.html', locals())
-
-            if user.balance < money:
-                # message = '余额不足，请充值，或请您选择是否支付宝付全款'
-                response['status'] = 4
-                response['msg'] = message = '余额不足，请使用支付宝充值'
-                # TODO 选择
+            except Concrete_flight.DoesNotExist:
+                response['status'] = 5
+                response['msg'] = message = '当天该航班并不直飞，请选择其他航班'
+                # return render(request, 'book_ticket.html', locals())
                 return JsonResponse(response)
-                # return render(request, 'book_ticket.html', locals()) # 此时应还有个充值按钮
-
-            # 所以这里使用函数来支付，因为当上面选择支付宝支付的时候也是成功支付了
-            pay_ticket(user, flight, date, money)
-            response['msg'] = message = '支付成功'
-            response['status'] = 0
-            print(message)
-            return JsonResponse(response)
-            # return render(request, 'book_ticket.html', locals())
-
-        except Flight.DoesNotExist:
-            response['msg'] = message = '航班不存在，请重新选择航班'
-            response['status'] = 6
-            return JsonResponse(response)
-            # return render(request, 'book_ticket.html', locals())
-        except Concrete_flight.DoesNotExist:
-            response['status'] = 5
-            response['msg'] = message = '当天该航班并不直飞，请选择其他航班'
-            # return render(request, 'book_ticket.html', locals())
-            return JsonResponse(response)
-
+        else :
+            response['status'] = 7
+            response['msg'] = message = '输入信息失效'
     else:
         return render(request,'book_ticket.html',locals())
 
@@ -178,61 +244,69 @@ def cancel_ticket(request):
         user = User.objects.get(name=username)
         user_dict = model_to_dict(user)
         #Done 传入订单号
-        order_number = request.POST.get('order_number')
-        order = Order.objects.get(order_number=order_number)
-        # flight_number = request.POST.get('flight_number')
-        # flight_number = order.flight.flight_number
-        # date_str = str(request.POST.get('date'))
-        # year, mouth, day = map(int, date_str.split('-'))
-        # date = datetime.date(year, mouth, day)
-        # the_datetime = order.flight_datetime
-        try:
-            # flight = Flight.objects.get(flight_number=flight_number)
-            flight=order.flight
-            the_datetime = order.flight_datetime
-            # the_datetime = datetime.datetime(
-            #     date.year, date.month, date.day,
-            #     flight.flight_time.hour, flight.flight_time.minute, flight.flight_time.second
-            # )
-            concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
+        cancel_form = forms.cancel_ticket_form(request.POST)
+        if cancel_form.is_valid():
+            order_number = cancel_form.cleaned_data.get('order_number')
+            # order_number = request.POST.get('order_number')
+            print(order_number)
+            order = Order.objects.get(order_number=order_number)
+            # flight_number = request.POST.get('flight_number')
+            # flight_number = order.flight.flight_number
+            # date_str = str(request.POST.get('date'))
+            # year, mouth, day = map(int, date_str.split('-'))
+            # date = datetime.date(year, mouth, day)
+            # the_datetime = order.flight_datetime
+            try:
+                # flight = Flight.objects.get(flight_number=flight_number)
+                flight=order.flight
+                the_datetime = order.flight_datetime
+                # the_datetime = datetime.datetime(
+                #     date.year, date.month, date.day,
+                #     flight.flight_time.hour, flight.flight_time.minute, flight.flight_time.second
+                # )
+                concrete_flight = Concrete_flight.objects.get(flight=flight,flight_datetime=the_datetime)
 
+                # return render(request, 'cancel_ticket.html', locals())
+                order = Order.objects.get(flight=flight,flight_datetime=concrete_flight.flight_datetime,user=user,order_is_valid=True)
+
+                order.order_is_valid = False
+                concrete_flight.book_sum -= 1
+                # flight.book_sum -= 1
+                user.balance += order.price
+                user.total_consumption -= order.price
+                #座位设置成False
+                seat = FlightSeatingChart.objects.get(concrete_flight=concrete_flight,seat_number=order.seat_number,is_occupied=True)
+                seat.is_occupied = False
+
+                # TODO 不知道是不是欠考虑了什么
+                setting_credit(user) # 更新信用
+                user.save()
+                concrete_flight.save()
+                order.concrete_flight = concrete_flight
+                order.save()
+                seat.save()
+
+                response['msg'] = message = '退票成功'
+                return JsonResponse(response)
             # return render(request, 'cancel_ticket.html', locals())
-            order = Order.objects.get(flight=flight,flight_datetime=concrete_flight.flight_datetime,user=user,order_is_valid=True)
 
-            order.order_is_valid = False
-            concrete_flight.book_sum -= 1
-            # flight.book_sum -= 1
-            user.balance += order.price
-            user.total_consumption -= order.price
-            #座位设置成False
-            seat = FlightSeatingChart.objects.get(concrete_flight=concrete_flight,seat_number=order.seat_number,is_occupied=True)
-            seat.is_occupied = False
 
-            # TODO 不知道是不是欠考虑了什么
-            setting_credit(user) # 更新信用
-            user.save()
-            concrete_flight.save()
-            order.concrete_flight = concrete_flight
-            order.save()
-            seat.save()
-
-            response['msg'] = message = '退票成功'
+            except Flight.DoesNotExist:# 航班不存在
+                response['msg'] = message = '航班不存在， 请重新输入'
+                return JsonResponse(response)
+                # return render(request, 'cancel_ticket.html', locals())
+            except Order.DoesNotExist:
+                response['msg'] = message = '订单不存在，请重新输入'
+                return JsonResponse(response)
+                # return render(request, 'cancel_ticket.html', locals())
+            except Concrete_flight.DoesNotExist:
+                response['msg'] = message = '当天该航班并不直飞，请重新输入'
+                return JsonResponse(response)
+                # return render(request, 'cancel_ticket.html', locals())
+        else :
+            response['msg'] = message = '退票失败，格式错误'
             return JsonResponse(response)
-            # return render(request, 'cancel_ticket.html', locals())
-
-
-        except Flight.DoesNotExist:# 航班不存在
-            response['msg'] = message = '航班不存在， 请重新输入'
-            return JsonResponse(response)
-            # return render(request, 'cancel_ticket.html', locals())
-        except Order.DoesNotExist:
-            response['msg'] = message = '订单不存在，请重新输入'
-            return JsonResponse(response)
-            # return render(request, 'cancel_ticket.html', locals())
-        except Concrete_flight.DoesNotExist:
-            response['msg'] = message = '当天该航班并不直飞，请重新输入'
-            return JsonResponse(response)
-            # return render(request, 'cancel_ticket.html', locals())
+            # return JsonResponse({})
     else:
         # return redirect('index/')
         return render(request, 'cancel_ticket.html', locals())
@@ -252,12 +326,13 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
     # seatNumber 默认是-1 如果传进来参数就是自己选座，否则自动分配座位
     contrete_time = datetime.datetime(
         date.year, date.month, date.day,
-        flight.flight_time.hour, flight.flight_time.minute, flight.flight_time.second
+        flight.starting_time.hour, flight.starting_time.minute, flight.starting_time.second
     )
     # contrete_time.date = date
     # contrete_time.time = flight.flight_time
-
+    print(contrete_time)
     contrete_flight = Concrete_flight.objects.get(flight_datetime=contrete_time,flight=flight)
+    print(contrete_flight,1)
     contrete_flight.book_sum += 1
     # flight.book_sum += 1 # 修改
     order = background.models.Order()
@@ -274,6 +349,7 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
                 if min_spare_seat_object is None:
                     min_spare_seat = seat_num+1
                     break
+
                 # min_spare_seat = min_spare_seat_dict.get('seat_number__min')
                 # if min_spare_seat is None:
                 #     min_spare_seat = int(seat_num)
@@ -328,6 +404,7 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
     user.save()
     # flight.save()
     contrete_flight.save()
+    order.concrete_flight = contrete_flight
     order.concrete_flight.save()
     order.save()
 
@@ -356,28 +433,34 @@ def paysView(request):
         #     total = money_form.cleaned_data.get('money')
         username = request.session.get('user_name')
         user = User.objects.get(name=username)
+        pay_form = forms.pay_form(request.POST)
+        if pay_form.is_valid():
 
-        total = int(request.POST.get('money'))
-        if total:
-            out_trade_no = str(int(time.time()))
-            # payInfo = dict(price=total, user_id=request.user.id, state='已支付')
-            # request.session['payInfo'] = payInfo # 前段传送逐id 和时间
-            # request.session['payTime'] = out_trade_no
-            user.balance += total
-            user.save()
-            return_url = 'http://' + request.get_host() + '.html'# 支付成功后的返回地址，
-            url = get_pay(out_trade_no, total, return_url)
-            return redirect(url)
+            total = int(request.POST.get('money'))
+            print(total,'none')
+            if total:
+                out_trade_no = str(int(time.time()))
+                # payInfo = dict(price=total, user_id=request.user.id, state='已支付')
+                # request.session['payInfo'] = payInfo # 前段传送逐id 和时间
+                # request.session['payTime'] = out_trade_no
+                user.balance += total
+                user.save()
+                return_url = 'http://' + request.get_host() + '.html'# 支付成功后的返回地址，
+                url = get_pay(out_trade_no, total, return_url)
+                response['url'] = url
+                return JsonResponse(response)
 
+            else:
+                return JsonResponse({'message': '订单金额不正确'})
         else:
-            return JsonResponse({'message': '订单金额不正确'})
+            return JsonResponse({'message': '订单格式不正确'})
     else:
         return render(request, 'pay.html', locals())
         # return JsonResponse({'message': '你的请求不是POST'})
         # return redirect('shopper:shopcart')# TODO ###
 
 def credit_evaluation(user):
-    orders = Order.objects.filter(user=user)
+    orders = Order.objects.filter(user=user,order_is_valid=False)
     count_broken_promises = int(0)
     for order in orders:
         order_create_time = order.order_time
@@ -411,7 +494,15 @@ def setting_credit(user):
         user.credit_rating = '1'
     else:
         user.credit_rating = '3'
+    user.save()
+    print('credit ',ret)
     if ret > 1:
         return True
     else:
         return False
+
+def get_date(request):
+    if request.method == 'GET':
+        date = datetime.date.today()
+        response['date'] = date
+        return JsonResponse(response)

@@ -12,8 +12,8 @@
                     <p style="width:100%;height:100%;font-size:15px;">{{desTime}} {{desAirport}}</p>
                 </div>
                 <div style="width:100%;height:50%">
-                    <p style="width:100%;height:100%;font-size:17px;text-indent:10px">{{company}}</p>
-                    <p style="width:100%;height:100%;font-size:17px;text-indent:10px;">{{time}}</p>
+                    <p style="width:100%;height:100%;font-size:17px;text-indent:10px">航班号:{{company}}</p>
+                    <p style="width:100%;height:100%;font-size:17px;text-indent:10px;">时长:{{time.slice(0,2)}}时{{time.slice(3,5)}}分</p>
                 </div>
             </div>
             <div style="width:3%;float:left;height:100%">
@@ -47,6 +47,7 @@ export default{
         high:String,
         company:String,
         time:String,
+        date:String
     },
     methods:{
         tofillOrder:function(type){
@@ -68,7 +69,7 @@ export default{
             seatType="头等舱";
             }
             this.$router.push(
-                {path:'/fillOrder',query:{departCity:this.departCity,desCity:this.desCity,departAirport:this.departAirport,desAirport:this.desAirport,departTime:this.departTime,desTime:this.desTime,seat:seatType,price:price,company:this.company}}
+                {path:'/fillOrder',query:{date:this.date,time:this.time,departCity:this.departCity,desCity:this.desCity,departAirport:this.departAirport,desAirport:this.desAirport,departTime:this.departTime,desTime:this.desTime,seat:seatType,price:price,company:this.company}}
             )
         }
     }

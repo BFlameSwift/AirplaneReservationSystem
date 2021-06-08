@@ -1,13 +1,21 @@
 <template>
   <div style="width: 2000px; height: 1000px">
+     <button
+        type="button"
+        class="button button--join button--round-s button--text-thick button--inverted button--size"
+        style="position:absolute;left: 60%; top: 55%; width: 300px; height: 60px"
+        @click="to_pay"
+      >
+        确认购买
+      </button>
     <div class="head">
       <img
         src="../assets/logox.png"
         alt=""
         style="position: absolute; left: 364px; top: 13px; width: 250px"
       />
-      <hr class="hr" color="#e8e8e8" />
-      <hr class="hr_bottom" color="#e8e8e8" />
+      <hr class="hr" color="#e8e8e8"/>
+      <hr class="hr_bottom" color="#e8e8e8"/>
       <a class="line" @click="search" style="left: 18%">查询</a>
       <a class="line" @click="manage" style="left: 27%">管理</a>
       <a class="line" @click="help" style="left: 36%">帮助</a>
@@ -102,7 +110,7 @@
             font-weight: 50;
           "
         >
-          承运方: {{ company }}
+          航班号: {{ company }}
         </p>
       </div>
       <hr
@@ -140,6 +148,7 @@
 </template>
 <script>
 import BlueBotton from "../components/BlueBotton.vue";
+
 export default {
   name: "afterBuy",
   components: {
@@ -160,10 +169,40 @@ export default {
       company: "南方航空",
     };
   },
+  created: function () {
+    this.departCity = this.$route.query.departCity;
+    this.desCity = this.$route.query.desCity;
+    this.departAirport = this.$route.query.departAirport;
+    this.desAirport = this.$route.query.desAirport;
+    this.departTime = this.$route.query.departTime;
+    this.desTime = this.$route.query.desTime;
+    this.price = this.$route.query.price;
+    this.time = this.$route.query.time;
+    this.company = this.$route.query.flight_number;
+    console.log(this.departAirport)
+    console.log(this.departAirport)
+  },
   methods: {
     toMycenter: function () {
-      this.$router.push({ path: "/personal", query: {} });
+      this.$router.push({path: "/personal", query: {}});
     },
+    search() {
+      this.$router.push('/main')
+    },
+    manage() {
+      this.$router.push('/personal')
+    },
+    help() {
+      this.$router.push('/personal')
+    },
+    book() {
+      this.$router.push('/personal')
+    },
+    to_pay(){
+      const formDatapay = new FormData();
+      formDatapay.append("money", this.price)
+      this.$http.post('api/pay/', formDatapay)
+    }
   },
 };
 </script>
@@ -177,10 +216,12 @@ export default {
   font-size: 15px;
   line-height: 40px;
 }
+
 .hr {
   position: relative;
   margin-top: 110px;
 }
+
 .line {
   position: absolute;
   top: 70%;
@@ -189,19 +230,95 @@ export default {
   color: #54545e;
   cursor: pointer;
 }
+
 .hr_bottom {
   position: relative;
   margin-top: 50px;
 }
-#t2 {
-  height: 120px;
-  margin: 0;
-  background: white;
-  color: #2e5c99;
-  line-height: 120px;
-  font-size: 35px;
-  font-family: serif;
-  padding-left: 60px;
-  font-weight: 700;
+
+.button {
+  float: left;
+  min-width: 150px;
+  max-width: 500px;
+  display: block;
+  margin: 1em;
+  padding: 1em 2em;
+  border: none;
+  background: none;
+  color: inherit;
+  position: relative;
+  z-index: 1;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button > span {
+  vertical-align: middle;
+}
+
+/* Sizes */
+.button--size {
+  font-size: 18px;
+}
+
+/* Typography and Roundedness */
+.button--text-thick {
+  font-weight: 300;
+}
+
+.button--round-s {
+  border-radius: 2px;
+}
+
+/* Wapasha */
+.button.button--login {
+  background: #176c97;
+  color: #fff;
+  -webkit-transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button.button--join {
+  background: #fff;
+  color: #196c97;
+  -webkit-transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button--join.button--inverted {
+  background: #fdfeff;
+  border: 1px solid #0d78ad;
+  color: #2d44a8;
+}
+
+.button--join::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0;
+  -webkit-transform: scale3d(0.6, 0.6, 1);
+  transform: scale3d(0.6, 0.6, 1);
+  -webkit-transition: -webkit-transform 0.3s, opacity 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
+  -webkit-transition-timing-function: cubic-bezier(0.75, 0, 0.125, 1);
+  transition-timing-function: cubic-bezier(0.75, 0, 0.125, 1);
+}
+
+.button--join:hover {
+  background-color: #fff;
+  color: #3f51b5;
+}
+
+.button--join.button--inverted:hover {
+  background-color: #0d78ad;
+  color: #fcfcfd;
 }
 </style>

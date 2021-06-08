@@ -7,13 +7,25 @@
           alt=""
           style="position: absolute; left: 364px; top: 13px; width: 250px"
         />
-        <hr class="hr" color="#e8e8e8" />
-        <hr class="hr_bottom" color="#e8e8e8" />
-        <a class="line" @click="search" style="left: 18%">查询</a>
+        <hr class="hr" color="#e8e8e8"/>
+        <hr class="hr_bottom" color="#e8e8e8"/>
+        <a class="line" @click="toMain" style="left: 18%">查询</a>
         <a class="line" @click="manage" style="left: 27%">管理</a>
         <a class="line" @click="help" style="left: 36%">帮助</a>
         <a class="line" @click="book" style="left: 45%">预定</a>
-        <!-- 登录 -->
+        <div v-if="isLogin===0">
+          <div class="to_login" @click="toRegister" style="bottom: 6%; right: 3%">
+            <p>注册</p>
+          </div>
+          <div class="to_login" @click="toLogin" style="bottom: 6%; right: 6%">
+            <p>登录</p>
+          </div>
+        </div>
+        <div v-if="isLogin!==0">
+          <div class="to_login" @click="toPersonal" style="bottom: 4%; right: 3%">
+            <p>您好，{{ username }}</p>
+          </div>
+        </div>
       </div>
     </div>
     <!-- <div style="height: 120px; border: 0; margin: 0; width: 58%; float: left">
@@ -33,7 +45,7 @@
         style="border: 0; background-color: #021b41; height: 2px; margin: 0"
       />
     </div> -->
-    <div style="margin-top: 140px">
+    <div style="margin-top: 220px">
       <p
         style="font-size: 30px; text-indent: 300px; font-weight: 100; margin: 0"
       >
@@ -43,25 +55,26 @@
         {{ date }}
       </p>
     </div>
-    <div style="margin-top: 0px; background: #fff; height: 100%">
+    <div style="margin-top: 0; background: #fff; height: 100%">
       <div style="height: 60px"></div>
       <div
-        v-for="(it, index) in mylist"
+        v-for="it in mylist"
         :key="index"
         style="margin-top: 20px; margin-left: 300px"
       >
         <each-flight
-          :desCity="it.desCity"
-          :departCity="it.departCity"
-          :departAirport="it.departAirport"
-          :desAirport="it.desAirport"
-          :departTime="it.departTime"
-          :desTime="it.desTime"
-          :company="it.company"
-          :time="it.time"
-          :low="it.low"
-          :mid="it.mid"
-          :high="it.high"
+          :desCity="it.origination"
+          :departCity="it.destination"
+          :departAirport="it.departure_airport"
+          :desAirport="it.landing_airport"
+          :departTime="it.starting_time"
+          :desTime="it.arrival_time"
+          :company="it.flight_number"
+          :time="it.flight_time"
+          :low="it.business_class_price"
+          :mid="it.economy_class_price"
+          :high="it.first_class_price"
+          :date="it.date"
         ></each-flight>
       </div>
     </div>
@@ -70,100 +83,103 @@
 <script>
 import BlueBotton from "../components/BlueBotton.vue";
 import EachFlight from "../components/EachFlight.vue";
+
 export default {
   name: "displayFlight",
   components: {
     BlueBotton,
     EachFlight,
   },
+
   data() {
     return {
-      departCity: "重庆",
-      desCity: "北京",
+      username: '',
+      departCity: "北京",
+      desCity: "上海",
       date: "2021-5-22",
-      mylist: [
-        {
-          departCity: "重庆",
-          desCity: "北京",
-          departAirport: "江北国际机场",
-          desAirport: "大兴国际机场",
-          departTime: "18:00",
-          desTime: "21:00",
-          time: "3h",
-          low: "1000",
-          mid: "2000",
-          high: "3000",
-          company: "南方航空",
-        },
-        {
-          departCity: "重庆",
-          desCity: "北京",
-          departAirport: "江北国际机场",
-          desAirport: "首都国际机场",
-          departTime: "17:00",
-          desTime: "20:00",
-          time: "3h",
-          low: "1500",
-          mid: "2000",
-          high: "3000",
-          company: "四川航空",
-        },
-        {
-          departCity: "重庆",
-          desCity: "北京",
-          departAirport: "江北国际机场",
-          desAirport: "大兴国际机场",
-          departTime: "14:00",
-          desTime: "17:00",
-          time: "3h",
-          low: "1000",
-          mid: "2500",
-          high: "3500",
-          company: "东方航空",
-        },
-      ],
-    };
+      mylist: [],
+    }
+  },
+  created: function () {
+    console.log(this.$route.query.mylist)
+    this.mylist = JSON.parse(this.$route.query.mylist);
+    console.log(this.$route.query.mylist)
+    console.log(this.mylist)
+    const Str = window.sessionStorage.getItem('token')
+    if (Str) this.isLogin = 1;
+    else this.isLogin = 0;
+    if (this.isLogin === 1) {
+      this.$http.get('/index/').then(result => {
+        this.username = result.data.user.name;
+      })
+    }
+    console.log(this.mylist)
+    console.log(this.mylist[0])
   },
   methods: {
     toMain: function () {
       this.$router.push("/");
     },
+    toLogin: function () {
+      this.$router.push("/login");
+    },
+    toRegister: function () {
+      this.$router.push("/register");
+    },
+    manage() {
+      this.$router.push("/personal");
+    },
+    help() {
+      this.$router.push("/personal");
+    },
+    toPersonal: function () {
+      this.$router.push("/personal");
+    },
+    book() {
+      this.$router.push("/personal");
+    },
   },
 };
 </script>
 <style scoped>
-#t1 {
-  height: 40px;
-  margin: 0px;
-  color: white;
-  background: #021b41;
-  text-align: center;
+
+.head {
+  position: absolute;
+  background-color: #ffffff;
+  color: black;
+  top: 0%;
+  height: 16%;
+  min-height: 165px;
+  width: 100%;
+}
+
+.to_login {
+  position: absolute;
   font-size: 15px;
-  line-height: 40px;
+  /* color: black; */
+  color: #54545e;
+  cursor: pointer;
 }
-#t2 {
-  height: 120px;
-  margin: 0;
-  background: white;
-  color: #2e5c99;
-  line-height: 120px;
-  font-size: 35px;
-  font-family: serif;
-  padding-left: 60px;
-  font-weight: 700;
-}
+
 .hr {
   position: relative;
   margin-top: 110px;
 }
+
+.hr_bottom {
+  position: relative;
+  margin-top: 50px;
+}
+
 .line {
   position: absolute;
-  top: 70%;
+  bottom: 16%;
   font-size: 20px;
   /* color: black; */
   color: #54545e;
   cursor: pointer;
 }
+
 .hr_bottom {
   position: relative;
   margin-top: 50px;
