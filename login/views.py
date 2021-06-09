@@ -196,6 +196,7 @@ def  change_information(request):
             return JsonResponse(response)
         else:
             response['msg'] = '输入信息不合法'
+            print(information_form)
             response['status'] = 2
             return JsonResponse(response)
 

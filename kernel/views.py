@@ -141,8 +141,12 @@ def book_ticket(request):
             print(date_str)
             year,mouth,day = map(int,date_str.split('-'))
             date = datetime.date(year,mouth,day)
-
-            user = User.objects.get(Id_number=Id_number)
+            try:
+                user = User.objects.get(Id_number=Id_number)
+            except User.DoesNotExist:
+                response['msg'] = message = '用户不存在'
+                response['status'] = 13
+                return JsonResponse(response)
             user_dict = model_to_dict(user)
             response['user'] = user_dict
             if not setting_credit(user):  # 函数在下面
@@ -448,8 +452,9 @@ def paysView(request):
                 return_url = 'http://' + request.get_host()+'/#/personal' # 支付成功后的返回地址，
                 url = get_pay(out_trade_no, total, return_url)
                 response['url'] = url
-                # return JsonResponse(response)
-                return redirect(url)
+                response['return_url'] = return_url
+                return JsonResponse(response)
+                # return redirect(url)
 
             else:
                 return JsonResponse({'message': '订单金额不正确'})

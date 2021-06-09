@@ -81,18 +81,18 @@
       更新个人信息
     </button>
     <div>
-        <div style="margin-top:350px;margin-left:300px">
+        <div style="margin-top:350px;margin-left:350px">
                <p class="tit">用户名</p>
               <input v-model="username" style="width:30%;">
-              <p class="tit" style="margin-top:50px">电子邮件地址</p>
-              <input v-model="email" style="width:30%;">
+              <p class="tit" style="margin-top:50px">手机号</p>
+              <input v-model="phoneNumber" style="width:30%;">
               <p class="tit" style="margin-top:50px">性别</p>
               <el-radio v-model="sex" label="male" style="margin-top:10px;margin-bottom:10px" size="medium">男</el-radio>
             <el-radio v-model="sex" label="female">女</el-radio>
             <p class="tit" style="margin-top:50px">出生日期</p>
-               <el-date-picker type="date" placeholder="选择出生日期" style="margin-top:30px;margin-bottom:30px" v-model="birthday"></el-date-picker>
+               <el-date-picker type="date" v-model="birthday" value-format="yyyy-MM-dd" placeholder="选择出生日期" style="margin-top:30px;margin-bottom:30px"></el-date-picker>
          </div>
-         <button class="btn" style="margin-left:300px;margin-top:50px" @click="update">确认修改</button>
+         <button class="btn" style="margin-left:350px;margin-top:50px" @click="update">确认修改</button>
     </div>
   </div>
 </template>
@@ -104,31 +104,32 @@ export default {
       username: "",
       birthday:"",
       sex:"",
-      email:"",
+      cancer:"学生",
+      phoneNumber:""
     };
   },
+  created(){
+    this.$http.get('/index/').then(result => {
+      this.username=result.data.user.name;
+      this.birthday=result.data.user.birthday;
+      this.sex=result.data.user.sex==='male'?'男':'女';
+      this.phoneNumber=result.data.user.phone_number;
+    })
 
+    },
   methods: {
     update:function(){
-const formData = new FormData();
-      formData.append("real_name", this.realname)
-      formData.append("sex", this.sex)
+      const formData = new FormData();
       formData.append("username", this.username)
-      formData.append("password1", this.password)
-      formData.append("password2", this.conPassword)
-      formData.append("email", this.email)
-      formData.append("Id_number", this.Id)
-      formData.append("phone_number", this.phoneNum)
-      formData.append("birthday", this.date)
-      console.log(this.username)
-      console.log(this.password)
-      console.log(this.Id)
-      console.log(this.conPassword)
-      console.log(this.email)
-      console.log(this.phoneNum)
-      console.log(this.realname)
+      formData.append("sex", this.sex)
+      console.log(this.birthday)
       console.log(this.sex)
-      this.$http.post('/index/', formData)
+      // const a = this.birthday.getFullYear() + '-' + (this.birthday.getMonth() + 1) + '-' + this.birthday.getDate()
+      formData.append("birthday", this.birthday)
+
+      formData.append("perfession", this.cancer)
+      formData.append("phone_number", this.phoneNumber)
+      this.$http.post('api/index/change/', formData)
         .then(result => {
           if (result.data.status === 0) {
             // eslint-disable-next-line no-undef

@@ -2,20 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e0e936d7-79bc-4c8f-9c64-f1d978e6a1ad" name="默认变更列表" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AirplaneReservationSystem/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/AirplaneReservationSystem/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/background/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/background/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/templates/pay.html" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/templates/pay.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AirplaneReservationSystem/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/AirplaneReservationSystem/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/views/update.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/update.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kernel/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/login/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/login/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/login/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -32,9 +38,13 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.standard" value="" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="settings.javascript.linters.eslint" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager">
@@ -75,6 +85,8 @@
       <workItem from="1623197466928" duration="4692000" />
       <workItem from="1623202269724" duration="378000" />
       <workItem from="1623203191107" duration="289000" />
+      <workItem from="1623204485227" duration="4466000" />
+      <workItem from="1623215970505" duration="1940000" />
     </task>
     <servers />
   </component>

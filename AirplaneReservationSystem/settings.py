@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
+
     'login',
     'background',
     # 'captcha',
@@ -38,7 +40,7 @@ INSTALLED_APPS = [
 
     'test_ajax',
     # 'rest_framework',
-    'corsheaders',
+
     'rest_framework',
     'rest_framework_swagger',
 
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
 
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -63,12 +66,39 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = (
-	'http://127.0.0.1:8000',
-    'http://localhost:8000'
-)
+
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+# CORS_ORIGIN_WHITELIST = (
+#     '*'
+# )
+CORS_ORIGIN_WHITELIST = (
+	'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'https://unitradeprod.alipaydev.com',
+    'https://excashier.alipaydev.com',
+
+)
+CORS_ALLOW_METHODS = (
+    'GET',
+    'POST',
+)
+CORS_ALLOW_HEADERS = (
+    'XMLHttpRequest',
+    'X_FILENAME',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'Pragma',
+)
+
+# ALLOWED_HOSTS = ['*']
 ROOT_URLCONF = 'AirplaneReservationSystem.urls'
 
 TEMPLATES = [
