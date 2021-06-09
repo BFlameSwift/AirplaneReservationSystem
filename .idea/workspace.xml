@@ -2,42 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e0e936d7-79bc-4c8f-9c64-f1d978e6a1ad" name="默认变更列表" comment="">
-      <change afterPath="$PROJECT_DIR$/front/src/components/EachFutureFlight.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/src/components/EachHistoryFlight.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/src/components/test.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/src/views/futureFlight.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/src/views/historyFlight.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/src/views/update.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/yarn.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AirplaneReservationSystem.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AirplaneReservationSystem.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webResources.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AirplaneReservationSystem/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/AirplaneReservationSystem/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/templates/produce_flight.html" beforeDir="false" afterPath="$PROJECT_DIR$/background/templates/produce_flight.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/background/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/background/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/background/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/background/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/components/EachFlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/EachFlight.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/components/EachFlightAdmin.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/EachFlightAdmin.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/components/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/Login.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/components/Personal.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/Personal.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/components/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/Register.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/components/main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/main.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/plugins/element.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/plugins/element.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/router/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/views/admin.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/admin.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/views/afterBuy.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/afterBuy.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/views/displayFlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/displayFlight.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/views/fillOrder.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/fillOrder.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/templates/pay.html" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/templates/pay.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kernel/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/login/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/login/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/login/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/perf_hooks/.npmignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/perf_hooks/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/perf_hooks/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/perf_hooks/package.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +29,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -98,6 +72,9 @@
       <option name="presentableId" value="Default" />
       <updated>1623170166618</updated>
       <workItem from="1623170174507" duration="3285000" />
+      <workItem from="1623197466928" duration="4692000" />
+      <workItem from="1623202269724" duration="378000" />
+      <workItem from="1623203191107" duration="289000" />
     </task>
     <servers />
   </component>
@@ -114,5 +91,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

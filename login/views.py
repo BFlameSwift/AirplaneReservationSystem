@@ -151,10 +151,55 @@ def index(request): # 个人中心，
         # return HttpResponse(json.dumps(response),content_type="application/json")
     # return JsonResponse(json.dumps({'user':user_dict,'orders':orders},cls=DjangoJSONEncoder),safe=False)
     # return render(request, 'login/index.html')
-
+@csrf_exempt
 def  change_information(request):
-    pass
-# TODO 逐个更改个人信息
+    if request.method == 'POST':
+        information_form = forms.PersonnalInformationForm(request.POST)
+        if information_form.is_valid():
+            username = information_form.cleaned_data.get('username')
+            phone_number = information_form.cleaned_data.get('phone_number')
+
+            sex = information_form.cleaned_data.get('sex')
+            birthday_str = information_form.cleaned_data.get('birthday')
+            perfession = information_form.cleaned_data.get('perfession')
+            year, mouth, day = map(int, birthday_str.split('-'))
+            birthday = datetime.date(year, mouth, day)
+
+
+
+            old_username = request.session['user_name']
+
+            if username != old_username:
+                same_name_user = User.objects.filter(name=username)
+                if same_name_user:
+                    response['status'] = 4
+                    response['msg'] = message = '用户名已经存在'
+                    return JsonResponse(response)
+            request.session['user_name'] = username
+
+            user = User.objects.get(name=old_username)
+            if phone_number != user.phone_number:
+                same_phone_number_user = User.objects.filter(phone_number=phone_number)
+                if same_phone_number_user:
+                    response['status'] = 8
+                    response['msg'] = message = '相同的手机号已经存在'
+                    return JsonResponse(response)
+            user.name = username
+            user.phone_number = phone_number
+            user.sex = sex
+            user.birthday = birthday
+            user.perfession = perfession
+            user.save()
+            response['token'] = user.name + user.password
+            response['status'] = 0
+            response['msg'] = message = '更改成功'
+            return JsonResponse(response)
+        else:
+            response['msg'] = '输入信息不合法'
+            response['status'] = 2
+            return JsonResponse(response)
+
+
 
 # postman 使用x-www-form-urlencoded模式即可
 @csrf_exempt

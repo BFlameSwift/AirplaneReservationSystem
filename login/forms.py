@@ -29,3 +29,17 @@ class RegisterForm(forms.Form):
     birthday = forms.CharField(max_length=30,
                                 widget=forms.TextInput(attrs={'class': 'form-control'}), label="出生日期")
     # captcha = CaptchaField(label='验证码')
+
+
+class PersonnalInformationForm(forms.Form):
+    gender = (
+        ('male', "男"),
+        ('female', "女"),
+    )
+    username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    phone_number = forms.CharField(label="手机号码", max_length=32,
+                                   widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    sex =forms.ChoiceField(label='性别', choices=gender)
+    birthday =forms.CharField(label="生日", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    perfession =forms.CharField(label="职业", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))

@@ -8,14 +8,15 @@ from django.views.decorators.csrf import csrf_exempt
 
 from . import forms
 from . import models
-from .models import Flight
+from .models import Flight,Concrete_flight
+from login.views import response
 from django.conf import settings
 @csrf_exempt
 def entry_flight(request):
     # if request.session.get('is_login',None):
     #     return redirect('/background/')
     if request.method == 'POST':
-        response = {}
+
         flight_form = forms.FlightrForm(request.POST)
         message = '请检查你的输入内容'
         if flight_form.is_valid():
@@ -32,17 +33,21 @@ def entry_flight(request):
             business_class_price = flight_form.cleaned_data.get('business_class_price')
             economy_class_price = flight_form.cleaned_data.get('economy_class_price')
             plane_type = flight_form.cleaned_data.get('plane_type')
+            start_date_str = flight_form.cleaned_data.get('starting_date')
+            end_date_str = flight_form.cleaned_data.get('ending_date')
 
-
-
-            message = '航班创建成功'
-
+            start_date_str = str(start_date_str)
+            end_date_str = str(end_date_str)
+            year1, mouth1, day1 = map(int, start_date_str.split('-'))
+            year2, mouth2, day2 = map(int, end_date_str.split('-'))
+            start_date = datetime.date(year1, mouth1, day1)
+            end_date = datetime.date(year2, mouth2, day2)
 
 
             try:
                 same_id_flight = models.Flight.objects.get(flight_number=flight_number)
                 response['status'] = 1
-                message = '已存在相同航班，请先检查历史航班'
+                response['msg'] = message = '已存在相同航班，请先检查历史航班'
                 return JsonResponse(response)
                 # return render(request, 'flight/entry_flight.html', locals())
 
@@ -55,14 +60,14 @@ def entry_flight(request):
                     # return JsonResponse(response[2])
 
                 if not (first_class_price > business_class_price and business_class_price > economy_class_price):
-                    response['msg'] = response['status'] = 3
-                    message='该航班舱位价格等级不正确，请检查舱位价格输入，请保证头等舱价格最高、经济舱价格最低'
+                    response['status'] = 3
+                    response['msg'] = message='该航班舱位价格等级不正确，请检查舱位价格输入，请保证头等舱价格最高、经济舱价格最低'
                     return JsonResponse(response)
                     # return render(request, 'flight/entry_flight.html', locals())
                     # return JsonResponse(response[3])
                 if starting_time > arrival_time:
                     response['status'] = 4
-                    response['msg'] = message='起飞时间晚于降落时间，请检查输入'
+                    response['msg'] = message = '起飞时间晚于降落时间，请检查输入'
                     # return render(request, 'flight/entry_flight.html', locals())
                     return JsonResponse(response)
 
@@ -95,6 +100,15 @@ def entry_flight(request):
                 # new_flight.plane_capacity = 200# 根据飞机型号定制 完成
 
                 new_flight.save()
+
+                try:
+                    flight = Flight.objects.get(flight_number=flight_number)
+                    produce_flight_from_date_to_date(flight, start_date, end_date)
+
+
+                except Flight.DoesNotExist:
+                    response['msg'] = message = '航班不存在，请重新输入'
+                    return render(request, 'produce_flight.html', locals())
                 response['status'] = 0
                 response['msg'] = '航班创建成功'
                 # time_interval = arrival_time.timestamp() - starting_time.timestamp()
@@ -108,7 +122,8 @@ def entry_flight(request):
             # TODO 对输入信息逐个处理分别输出相应的错误信息
             response['msg'] = message = '请检查输入航班信息是否有效'
             response['status'] = 5
-            flight_form = forms.FlightrForm()
+            # flight_form = forms.FlightrForm()
+            print(flight_form)
             return JsonResponse(response)
             # return render(request, 'flight/entry_flight.html', locals())
     else:
@@ -116,8 +131,24 @@ def entry_flight(request):
         return render(request, 'flight/entry_flight.html', locals())
 # TODO 非POST请求应该是第一次进入界面，上面的html待修改为某个地址
 @csrf_exempt
+def delete_con_flight(request):
+    if request.method == 'POST':
+        concrete_form = forms.concrete_flight_id_Form(request.POST)
+        if concrete_form.is_valid():
+            concrete_id = concrete_form.cleaned_data.get('concrete_flight_id')
+            concrete_flight = Concrete_flight.objects.get(id = concrete_id)
+            concrete_flight.delete()
+            response['status'] = 0
+            response['msg'] = 'success'
+            return JsonResponse(response)
+        else :
+            response['status'] = 2
+            response['msg'] = '输入错误'
+            return JsonResponse(response)
+
+@csrf_exempt
 def delete_flight(request):
-    response = {}
+
     if request.method == 'POST':
         flight_form = forms.flight_number_Form(request.POST)
 

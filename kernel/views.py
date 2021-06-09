@@ -445,10 +445,11 @@ def paysView(request):
                 # request.session['payTime'] = out_trade_no
                 user.balance += total
                 user.save()
-                return_url = 'http://' + request.get_host() + '.html'# 支付成功后的返回地址，
+                return_url = 'http://' + request.get_host()+'/#/personal' # 支付成功后的返回地址，
                 url = get_pay(out_trade_no, total, return_url)
                 response['url'] = url
-                return JsonResponse(response)
+                # return JsonResponse(response)
+                return redirect(url)
 
             else:
                 return JsonResponse({'message': '订单金额不正确'})

@@ -32,7 +32,8 @@ class FlightrForm(forms.Form):
     # highlevel_economy_class_price = forms.FloatField(label="高级经济舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
     business_class_price = forms.FloatField(label="商务舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
     economy_class_price = forms.FloatField(label="经济舱价格",widget=forms.NumberInput(attrs={'class': 'form-control'}))
-
+    starting_date = forms.DateField(label="始发日期", widget=forms.DateInput(attrs={'class': 'form-control'}))
+    ending_date = forms.DateField(label="终止日期", widget=forms.DateInput(attrs={'class': 'form-control'}))
 class StartStopDateForm(forms.Form):
     starting_date = forms.DateField(label="始发日期", widget=forms.DateInput(attrs={'class': 'form-control'}))
     ending_date = forms.DateField(label="终止日期", widget=forms.DateInput(attrs={'class': 'form-control'}))
@@ -41,3 +42,5 @@ class StartStopDateForm(forms.Form):
     # plane_capacity = forms.IntegerField(label="飞机容量")
 class flight_number_Form(forms.Form):
     flight_number = forms.CharField(max_length=30, label="航班号", widget=forms.TextInput(attrs={'class': 'form-control'}))
+class concrete_flight_id_Form(forms.Form):
+    concrete_flight_id =  forms.CharField(max_length=30, label="航班id", widget=forms.TextInput(attrs={'class': 'form-control'}))
