@@ -1,6 +1,6 @@
 import datetime
 import hashlib
-
+import json
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -11,6 +11,32 @@ from . import models
 from .models import Flight,Concrete_flight
 from login.views import response
 from django.conf import settings
+
+@csrf_exempt
+def show_flight(request):
+    if request.method == 'GET':
+        flight_list = Flight.objects.all()
+        show_flight_list = []
+        for flight in flight_list:
+            mydict = {}
+            mydict['flight_number'] = flight.flight_number
+            mydict['origination'] =flight.origination
+            mydict['destination'] =flight.destination
+            mydict['departure_airport '] = flight.departure_airport
+            mydict['landing_airport'] =flight.landing_airport
+            mydict['starting_time'] =str(flight.starting_time)
+            mydict['flight_time'] =str(flight.flight_time)
+            mydict['arrival_time'] =str(flight.arrival_time)
+            mydict['first_class_price '] = flight.first_class_price
+            mydict['business_class_price'] = flight.business_class_price
+            mydict['economy_class_price'] =flight.economy_class_price
+            mydict['plane_capacity'] =flight.plane_capacity
+            show_flight_list.append(mydict)
+
+        response['show_flight_list'] = json.dumps(show_flight_list, ensure_ascii=False)
+        return JsonResponse(response)
+    else:
+        return JsonResponse({})
 @csrf_exempt
 def entry_flight(request):
     # if request.session.get('is_login',None):
@@ -156,27 +182,34 @@ def delete_flight(request):
         if flight_form.is_valid():
             flight_num = flight_form.cleaned_data.get('flight_number')
             if not check_flight_number(flight_num):
+                response['status'] = 2
                 response['msg'] = message = '航班号格式错误，请重新输入'
                 # return JsonResponse({'message': message, 'flight_number': flight_num})
-                return render(request, 'flight/delete_flight.html', locals())
+                return JsonResponse(response)
+                # return render(request, 'flight/delete_flight.html', locals())
             try:
                 flight = models.Flight.objects.get(flight_number = flight_num)
                 flight.delete()
                 response['msg'] = message = '航班删除成功'
+                response['status'] = 3
                 return JsonResponse(response)
 
                 # return render(request, 'flight/delete_flight.html', locals())
                 # return JsonResponse({'message': message, 'flight_number': flight_num})
             except:
-
+                response['status'] = 6
                 response['msg'] = message = '航班不存在，请重新输入'
                 print(locals())
+                return JsonResponse(response)
                 # return JsonResponse({'message':message,'flight_number':flight_num})
-                return render(request, 'flight/delete_flight.html', locals())
+                # return render(request, 'flight/delete_flight.html', locals())
         else :
             flight_form = forms.flight_number_Form(request.POST)
             # return JsonResponse({'message': message})
-            return render(request, 'flight/delete_flight.html', locals())
+            response['status'] = 4
+            response['msg'] = message = '航班号格式错误'
+            return JsonResponse(response)
+            # return render(request, 'flight/delete_flight.html', locals())
 
     else:
         # message = '请检查输入航班号码'

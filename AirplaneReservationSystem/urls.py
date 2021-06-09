@@ -20,7 +20,7 @@ from django.views.generic.base import TemplateView
 import kernel.views
 from login import views
 from background.views import entry_flight
-from background.views import delete_flight,setting_new_flight,delete_con_flight
+from background.views import delete_flight,setting_new_flight,delete_con_flight,show_flight
 from kernel.views import *
 from django.urls import include
 
@@ -40,6 +40,7 @@ urlpatterns = [
     path('api/background/delete_flight/',delete_flight),
     path('api/background/produce_flight/',setting_new_flight),
     path('api/background/delete_con_flight/',delete_con_flight),
+    path('api/background/show_flight/',show_flight),
     path('api/query_flight/',query_flight),
 
     path('api/book_ticket/',kernel.views.book_ticket),
