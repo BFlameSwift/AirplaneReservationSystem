@@ -1,5 +1,4 @@
 <template>
-  <template>
     <div style="width:1000px;height:160px;background:white">
         <div class="frame">
             <label style="font-size:15px;font-weight:50">航班号:</label>
@@ -24,8 +23,7 @@
             <input v-model="mid" style="width:10%;margin-left:1%">
             <label style="font-size:15px;font-weight:50;margin-left:5%">头等舱价格:</label>
             <input v-model="high" style="width:10%;margin-left:1%">
-            <button style="margin-left:145px;width:60px;margin-top:10px" class="blueb">修改</button>
-            <button style="margin-left:15px;width:60px;margin-top:10px" class="redb">删除</button>
+            <button style="margin-left:150px;width:60px;margin-top:10px" @click="deleted" class="redb">删除</button>
         </div>
     </div>
 </template>
@@ -43,8 +41,16 @@ export default{
         low:String,
         mid:String,
         high:String,
-        company:String,
         time:String,
+    },
+    methods:{
+      deleted:function (){
+        const formData = new FormData();
+        formData.append("flight_number",this.flightid)
+        this.$http.post('api/background/delete_flight/', formData)
+        .then(result => {
+          this.$router.go(0)})
+      }
     }
 }
 </script>

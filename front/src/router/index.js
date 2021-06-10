@@ -41,6 +41,8 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/register') return next();
   if (to.path === '/main') return next();
   if (to.path === '/displayFlight') return next();
+  if (to.path === '/admin') return next();
+  if (to.path === '/addFlight') return next();
   const tokenStr = window.sessionStorage.getItem('token')
   if (!tokenStr) return next('/login')
   if (tokenStr&&to.path === '/register') return next('/personal')

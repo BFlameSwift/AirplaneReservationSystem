@@ -22,12 +22,12 @@ def show_flight(request):
             mydict['flight_number'] = flight.flight_number
             mydict['origination'] =flight.origination
             mydict['destination'] =flight.destination
-            mydict['departure_airport '] = flight.departure_airport
+            mydict['departure_airport'] = flight.departure_airport
             mydict['landing_airport'] =flight.landing_airport
             mydict['starting_time'] =str(flight.starting_time)
             mydict['flight_time'] =str(flight.flight_time)
             mydict['arrival_time'] =str(flight.arrival_time)
-            mydict['first_class_price '] = flight.first_class_price
+            mydict['first_class_price'] = flight.first_class_price
             mydict['business_class_price'] = flight.business_class_price
             mydict['economy_class_price'] =flight.economy_class_price
             mydict['plane_capacity'] =flight.plane_capacity

@@ -2,11 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e0e936d7-79bc-4c8f-9c64-f1d978e6a1ad" name="默认变更列表" comment="">
-      <change afterPath="$PROJECT_DIR$/AirplaneReservationSystem.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AirplaneReservationSystem.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AirplaneReservationSystem.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/this.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AirplaneReservationSystem/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/AirplaneReservationSystem/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AirplaneReservationSystem.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/background/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/background/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/components/EachFlightAdmin.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/EachFlightAdmin.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/components/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/components/Personal.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/Personal.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/components/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/Register.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/components/main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/main.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/router/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/views/addFlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/addFlight.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/views/admin.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/admin.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/views/afterBuy.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/afterBuy.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/views/displayFlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/displayFlight.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/views/futureFlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/futureFlight.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/views/historyFlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/historyFlight.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/views/update.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/views/update.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +105,10 @@
       <workItem from="1623204485227" duration="4466000" />
       <workItem from="1623215970505" duration="1940000" />
       <workItem from="1623220032962" duration="2454000" />
+      <workItem from="1623227822461" duration="59000" />
+      <workItem from="1623230262013" duration="344000" />
+      <workItem from="1623240694956" duration="2247000" />
+      <workItem from="1623244712026" duration="1329000" />
     </task>
     <servers />
   </component>

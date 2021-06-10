@@ -179,14 +179,14 @@ export default {
     search(){
       this.$router.push('/main')
     },
-    manage(){
-      this.$router.push('/personal')
+    manage() {
+      this.$router.push('/historyFlight')
     },
-    help(){
-      this.$router.push('/personal')
+    help() {
+      this.$router.push('/HelloWorld')
     },
-    book(){
-      this.$router.push('/personal')
+    book() {
+      this.$router.push('/futureFlight')
     },
     exit(){
       this.$router.push('/main')

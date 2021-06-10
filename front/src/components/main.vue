@@ -132,7 +132,7 @@ export default {
   data() {
     return {
       date: new Date(),
-      min: '2021-6-8',
+      min: '2020-6-8',
       max: '2022-12-12',
       destination: '',
       departure: '',
@@ -244,13 +244,13 @@ export default {
       this.$router.push("/personal");
     },
     manage() {
-      this.$router.push('/personal')
+      this.$router.push('/historyFlight')
     },
     help() {
-      this.$router.push('/personal')
+      this.$router.push('/HelloWorld')
     },
     book() {
-      this.$router.push('/personal')
+      this.$router.push('/futureFlight')
     },
     //   todisplayFlight:function(){
     //     console.log("xxx")

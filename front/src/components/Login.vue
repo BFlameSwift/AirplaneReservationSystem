@@ -95,7 +95,14 @@ export default {
 
             window.sessionStorage.setItem('token', result.data.token);
             this.$router.go(-1);
-          } else {
+          } else if(result.data.status === 1){
+            this.$message({
+              message: result.data.msg,
+              type: 'success'
+            });
+             this.$router.push('/admin')
+          }
+          else {
             // eslint-disable-next-line no-undef
             this.$alert(result.data.msg, '登陆失败', {
               confirmButtonText: '确定',

@@ -37,11 +37,15 @@
       />
       <div style="height: 60px"></div>
       <div
-        v-for="(it, index) in flights"
+        v-for="it in flights"
         :key="index"
         style="margin-left: 300px; margin-top: 20px"
       >
-        <each-flight-admin></each-flight-admin>
+        <each-flight-admin :desCity=it.origination :departCity=it.destination :departAirport=it.departure_airport
+          :desAirport=it.landing_airport :departTime=it.starting_time :desTime=it.arrival_time
+          :flightid=it.flight_number :orderID=it.order_id
+          :time=it.flight_time :low='it.economy_class_price' :mid='it.business_class_price' :high='it.first_class_price'>
+        </each-flight-admin>
       </div>
     </div>
   </div>
@@ -72,8 +76,14 @@ export default {
         },
       ],
       value: "0",
-      flights: [{}, {}, {}, {}],
+      flights: [],
     };
+  },
+  created() {
+    this.$http.get('api/background/show_flight/').then(result => {
+      this.flights = JSON.parse(result.data.show_flight_list);
+      console.log(this.flights)
+    })
   },
   components: {
     BlueBotton,
@@ -88,14 +98,15 @@ export default {
       this.$router.push('/main')
     },
     manage() {
-      this.$router.push('/personal')
+      this.$router.push('/historyFlight')
     },
     help() {
-      this.$router.push('/personal')
+      this.$router.push('/HelloWorld')
     },
     book() {
-      this.$router.push('/personal')
-    }
+      this.$router.push('/futureFlight')
+    },
+
   },
 };
 </script>

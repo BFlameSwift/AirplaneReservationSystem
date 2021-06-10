@@ -127,15 +127,15 @@ export default {
       this.$router.push("/register");
     },
     manage() {
-      this.$router.push("/personal");
+      this.$router.push('/historyFlight')
     },
     help() {
-      this.$router.push("/personal");
-    },
-    toPersonal: function () {
-      this.$router.push("/personal");
+      this.$router.push('/HelloWorld')
     },
     book() {
+      this.$router.push('/futureFlight')
+    },
+    toPersonal: function () {
       this.$router.push("/personal");
     },
   },

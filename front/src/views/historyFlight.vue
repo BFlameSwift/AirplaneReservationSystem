@@ -143,13 +143,13 @@ export default {
       this.$router.push('/main')
     },
     manage() {
-      this.$router.push('/personal')
+      this.$router.push('/historyFlight')
     },
     help() {
-      this.$router.push('/personal')
+      this.$router.push('/HelloWorld')
     },
     book() {
-      this.$router.push('/personal')
+      this.$router.push('/futureFlight')
     },
     exit() {
       this.$router.push('/main')

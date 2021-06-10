@@ -190,18 +190,21 @@ export default {
       this.$router.push('/main')
     },
     manage() {
-      this.$router.push('/personal')
+      this.$router.push('/historyFlight')
     },
     help() {
-      this.$router.push('/personal')
+      this.$router.push('/HelloWorld')
     },
     book() {
-      this.$router.push('/personal')
+      this.$router.push('/futureFlight')
     },
     to_pay(){
       const formDatapay = new FormData();
       formDatapay.append("money", this.price)
-      this.$http.post('api/pay/', formDatapay)
+      this.$http.post('api/pay/', formDatapay).then(result =>{
+        console.log(result.data)
+        window.location.href = result.data.url;
+      })
     }
   },
 };
