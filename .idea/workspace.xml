@@ -1,132 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e0e936d7-79bc-4c8f-9c64-f1d978e6a1ad" name="默认变更列表" comment="">
-      <change afterPath="$PROJECT_DIR$/img/README/image-20210618192622098.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kernel/key/private.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kernel/key/public.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kernel/my_alipay.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AirplaneReservationSystem/setting2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AirplaneReservationSystem/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/AirplaneReservationSystem/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AirplaneReservationSystem/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/AirplaneReservationSystem/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/background/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0002_auto_20210524_1900.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0003_auto_20210525_0907.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0004_auto_20210525_1414.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0005_auto_20210526_0824.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0006_auto_20210526_0846.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0007_auto_20210531_1547.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0008_auto_20210603_1651.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/0009_auto_20210603_2019.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0002_alter_flight_flight_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0003_auto_20210517_1349.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0004_auto_20210517_1545.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0005_auto_20210517_1559.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0006_auto_20210518_2331.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0007_alter_flight_flight_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0008_auto_20210519_1422.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0009_auto_20210519_1439.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0010_auto_20210519_1555.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0011_alter_order_flight_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0012_alter_order_flight_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0013_auto_20210519_1900.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0014_alter_order_flight_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0015_auto_20210520_1558.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0016_alter_order_flight_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0017_alter_order_flight_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0018_auto_20210523_1921.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/0019_alter_order_flight_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/migrations/hide/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/background/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/pays.py" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/pays.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/login/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0002_auto_20210524_1900.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0003_auto_20210525_0907.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0004_alter_user_credit_rating.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0005_auto_20210526_0824.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0006_alter_user_credit_rating.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0007_auto_20210531_1547.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0008_auto_20210603_1651.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/0009_alter_user_credit_rating.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0002_auto_20210513_1454.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0003_auto_20210518_2331.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0004_auto_20210519_0804.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0005_auto_20210519_1422.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0006_auto_20210519_1439.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0007_auto_20210519_1555.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0008_alter_user_birthday.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0009_auto_20210519_1643.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0010_auto_20210519_1900.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0011_alter_user_credit_rating.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0012_auto_20210520_1558.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0013_auto_20210520_1626.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0014_auto_20210522_1422.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0015_auto_20210523_1921.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0016_alter_user_credit_rating.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/0017_alter_user_credit_rating.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/migrations/hide/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/templates/login/confirm.html" beforeDir="false" afterPath="$PROJECT_DIR$/login/templates/login/confirm.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/login/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/login/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/apps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/forms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/models.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/css/bootstrap-theme.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/css/bootstrap-theme.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/css/bootstrap-theme.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/css/bootstrap-theme.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/css/bootstrap.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/css/bootstrap.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/css/bootstrap.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/css/bootstrap.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/fonts/glyphicons-halflings-regular.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/fonts/glyphicons-halflings-regular.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/fonts/glyphicons-halflings-regular.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/fonts/glyphicons-halflings-regular.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/fonts/glyphicons-halflings-regular.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/js/bootstrap.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/js/bootstrap.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/bootstrap/js/npm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/dashboard.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/default_header.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/fontawesome/css/font-awesome.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/fontawesome/css/font-awesome.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/fontawesome/fonts/FontAwesome.otf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/fontawesome/fonts/fontawesome-webfont.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/fontawesome/fonts/fontawesome-webfont.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/fontawesome/fonts/fontawesome-webfont.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/fontawesome/fonts/fontawesome-webfont.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/fontawesome/fonts/fontawesome-webfont.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/jquery-3.3.1.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/jquery-3.4.1.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/signin.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/sweetalert/sweetalert.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/static/sweetalert/sweetalert.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/templates/test_ajax/add_person.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/templates/test_ajax/list_person.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/templates/test_ajax/tangshi.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/tests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ajax/views.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_python/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_python/newflight.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_python/test_datetime.time_minus.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/this.txt" beforeDir="false" />
-    </list>
+    <list default="true" id="e0e936d7-79bc-4c8f-9c64-f1d978e6a1ad" name="默认变更列表" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -244,6 +119,7 @@
       <workItem from="1623244712026" duration="1329000" />
       <workItem from="1624069971965" duration="125000" />
       <workItem from="1624070146895" duration="1294000" />
+      <workItem from="1624071880759" duration="414000" />
     </task>
     <servers />
   </component>
