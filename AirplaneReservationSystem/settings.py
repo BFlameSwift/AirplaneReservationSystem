@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     # 'captcha',
     'kernel',
 
-    'test_ajax',
     # 'rest_framework',
 
     'rest_framework',
@@ -65,7 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+APPEND_SLASH=False
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
@@ -106,7 +105,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # 'DIRS': [BASE_DIR / 'templates']
 
-        'DIRS': [BASE_DIR/ 'front/dist'],  # 修改的行e,
+        'DIRS': [BASE_DIR/ 'front/dist'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,9 +133,9 @@ WSGI_APPLICATION = 'AirplaneReservationSystem.wsgi.application'
 DATABASES ={
     'default':{
         'ENGINE':'django.db.backends.mysql',
-        'NAME':'ars',
-        'USER': 'root',
-        'PASSWORD':'BUAASQL2019@',
+        'NAME':'', #TODO Replace it with yours
+        'USER': '', #TODO Replace it with yours
+        'PASSWORD':'', #TODO Replace it with yours
         'HOST':'localhost',
         'PORT':'3306',
     }
@@ -144,7 +143,11 @@ DATABASES ={
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+from django.conf import settings
 
+settings.configure(
+    ROOT_URLCONF=__name__,
+)
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -201,6 +204,7 @@ STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR,'front/dist/static')
 ]
+# STATIC_ROOT  = os.path.join(BASE_DIR,'front/dist/static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -210,8 +214,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.126.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = 'chlorinum@126.com'         # your email
-EMAIL_HOST_PASSWORD = 'QBUCCRELRTNZJJWV'
+EMAIL_HOST_USER = '@126.com'         # your email
+EMAIL_HOST_PASSWORD = '' #TODO Replace it with your smtp authorization code
 
 CONFIRM_DAYS = 7
 # 此处密码应为开启 SMTP 的授权码

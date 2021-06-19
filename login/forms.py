@@ -36,6 +36,7 @@ class PersonnalInformationForm(forms.Form):
         ('male', "男"),
         ('female', "女"),
     )
+    new_username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
     username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
     phone_number = forms.CharField(label="手机号码", max_length=32,
                                    widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -43,3 +44,9 @@ class PersonnalInformationForm(forms.Form):
     sex =forms.ChoiceField(label='性别', choices=gender)
     birthday =forms.CharField(label="生日", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
     perfession =forms.CharField(label="职业", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+
+class usernameForm(forms.Form):
+
+    username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))

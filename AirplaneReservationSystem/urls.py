@@ -25,6 +25,10 @@ from kernel.views import *
 from django.urls import include
 
 from login.views import *
+
+from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.views import serve
+favicon_view = RedirectView.as_view(url='/favicon.ico', permanent=True)
 urlpatterns = [
     path('',TemplateView.as_view(template_name="index.html")),
 
@@ -35,6 +39,7 @@ urlpatterns = [
     path('api/register/', views.register),
     path('api/logout/', views.logout),
     # path('captcha/',include('captcha.urls')),
+    # url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': settings.MEDIA_URL+'images/favicon.ico'}),
     path('confirm/', views.user_confirm),
     path('api/background/entry_flight/',entry_flight),
     path('api/background/delete_flight/',delete_flight),
@@ -49,8 +54,12 @@ urlpatterns = [
     path('api/getdate/',kernel.views.get_date),
 
     path('api/pay/', kernel.views.paysView, name='pays'),
-    # TODO 支付后返回的url
+    path('api/notify/',kernel.views.update_order),
 
-    path('test_ajax/',include('test_ajax.urls'))
+    # url(r'^favicon.ico$', RedirectView.as_view(url=r'static/favicon.ico')),
+    path('favicon.ico', serve, {'path': './favicon.ico'}),
+
+    # path('favicon.ico/',favicon_view)
+    # url(r'^favicon\.ico$', favicon_view),
 
 ]

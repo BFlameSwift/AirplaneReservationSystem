@@ -14,7 +14,7 @@ from django.conf import settings
 
 @csrf_exempt
 def show_flight(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         flight_list = Flight.objects.all()
         show_flight_list = []
         for flight in flight_list:
@@ -138,14 +138,12 @@ def entry_flight(request):
                 response['status'] = 0
                 response['msg'] = '航班创建成功'
                 # time_interval = arrival_time.timestamp() - starting_time.timestamp()
-                # print('time_interval'+time_interval)
-                # print(locals())
-                # print(new_flight.flight_time)
+
                 # return render(request,'flight/background.html',locals())
                 return JsonResponse(response)
                 # return render(request, 'flight/entry_flight.html', locals())
         else:
-            # TODO 对输入信息逐个处理分别输出相应的错误信息
+
             response['msg'] = message = '请检查输入航班信息是否有效'
             response['status'] = 5
             # flight_form = forms.FlightrForm()
@@ -155,7 +153,7 @@ def entry_flight(request):
     else:
         flight_form = forms.FlightrForm()
         return render(request, 'flight/entry_flight.html', locals())
-# TODO 非POST请求应该是第一次进入界面，上面的html待修改为某个地址
+
 @csrf_exempt
 def delete_con_flight(request):
     if request.method == 'POST':
@@ -216,7 +214,7 @@ def delete_flight(request):
         flight_form = forms.flight_number_Form()
         # return JsonResponse({'message': message})
         return render(request, 'flight/delete_flight.html', locals())
-    # TODO 非POST请求应该是第一次进入界面，上面的html待修改为某个地址
+
 
 def setting_new_flight(request):
     if request.method == 'POST':

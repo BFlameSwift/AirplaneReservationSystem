@@ -19,7 +19,7 @@ class FlightrForm(forms.Form):
         )
          ),
     ]
-    # TODO plane type need
+
     plane_type = forms.ChoiceField(label='飞机型号', choices=plane_type_choices,widget=forms.Select)
     origination = forms.CharField(max_length=30,label="始发地", widget=forms.TextInput(attrs={'class': 'form-control'}))
     destination = forms.CharField(max_length=30,label="目的地", widget=forms.TextInput(attrs={'class': 'form-control'}))

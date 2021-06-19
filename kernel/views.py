@@ -1,4 +1,11 @@
 import datetime
+import os.path
+
+from. import my_alipay
+
+from urllib.parse import parse_qs
+import alipay
+from . import pays
 from django.core import serializers
 from django.db.models import Min, Count, Max
 from django.shortcuts import render, redirect
@@ -7,17 +14,23 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 # Create your views here.
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 import time
 
 import background.models
+import login.views
 from . import forms
 from background.models import Flight,Order,Concrete_flight,FlightSeatingChart
 from login.models import User
-from .pays import get_pay
+from .pays import *
 
-from login.views import response
+# from login.views import response
+
+
+response = {}
+response = login.views.response
+
 @csrf_exempt
 def query_flight(request):
     message = '请输入航班信息'
@@ -29,6 +42,7 @@ def query_flight(request):
         # print(query_flight_form)
 
         if query_flight_form.is_valid():
+
             origination = query_flight_form.cleaned_data.get('origination')
             destination = query_flight_form.cleaned_data.get('destination')
             date_str = query_flight_form.cleaned_data.get('date')
@@ -48,26 +62,36 @@ def query_flight(request):
                 , 23, 59, 59
             )
             concrete_flight_set = Concrete_flight.objects.filter(flight_datetime__gte=datetime_begin,flight_datetime__lte=datetime_end)
+
+
             flight_set = Flight.objects.filter(origination=origination,destination=destination)
+            flight_number_set = []
+            for flight in flight_set:
+                flight_number_set.append(flight.flight_number)
             response['flight_set'] = json.loads(serializers.serialize("json",flight_set))
             response['concrete_flight_set'] = json.loads(serializers.serialize("json",concrete_flight_set))
+
             flight_list = []
+
             for concrete_flight in concrete_flight_set:
-                my_dict = {}
-                my_dict['flight_time'] = str(concrete_flight.flight.flight_time)
-                my_dict['starting_time'] =str(concrete_flight.flight.starting_time)
-                my_dict['arrival_time'] =str(concrete_flight.flight.arrival_time)
-                my_dict['departure_airport'] =concrete_flight.flight.departure_airport
-                my_dict['landing_airport'] =concrete_flight.flight.landing_airport
-                my_dict['first_class_price'] =concrete_flight.flight.first_class_price
-                my_dict['business_class_price'] =concrete_flight.flight.business_class_price
-                my_dict['economy_class_price'] =concrete_flight.flight.economy_class_price
-                my_dict['flight_number'] =concrete_flight.flight.flight_number
-                my_dict['concrete_flight_id'] = concrete_flight.id
-                my_dict['origination'] = concrete_flight.flight.origination
-                my_dict['destination'] = concrete_flight.flight.destination
-                my_dict['date'] = date_str
-                flight_list.append(my_dict)
+                if  concrete_flight.flight.flight_number in flight_number_set:
+
+                    my_dict = {}
+                    my_dict['flight_time'] = str(concrete_flight.flight.flight_time)
+                    my_dict['starting_time'] =str(concrete_flight.flight.starting_time)
+                    my_dict['arrival_time'] =str(concrete_flight.flight.arrival_time)
+                    my_dict['departure_airport'] =concrete_flight.flight.departure_airport
+                    my_dict['landing_airport'] =concrete_flight.flight.landing_airport
+                    my_dict['first_class_price'] =concrete_flight.flight.first_class_price
+                    my_dict['business_class_price'] =concrete_flight.flight.business_class_price
+                    my_dict['economy_class_price'] =concrete_flight.flight.economy_class_price
+                    my_dict['flight_number'] =concrete_flight.flight.flight_number
+                    my_dict['concrete_flight_id'] = concrete_flight.id
+                    my_dict['origination'] = concrete_flight.flight.origination
+                    my_dict['destination'] = concrete_flight.flight.destination
+                    my_dict['date'] = date_str
+                    flight_list.append(my_dict)
+
             if flight_list.__len__() == 0:
                 response['status'] = 1
                 response['msg'] = '当日无航班直飞，请选择其他日期'
@@ -76,7 +100,7 @@ def query_flight(request):
 
 
             response['flight_list'] = json.dumps(flight_list,ensure_ascii=False)
-                #TODO 可能会有bug
+
             response['status'] = 0
             response['msg'] = '查找成功'
             print(locals())
@@ -116,17 +140,12 @@ def query_flight(request):
 @csrf_exempt
 def book_ticket(request):
 
-# Done 新建订单是如果要预订的机票的飞行时间中已经订过冲突航班了就提示
-# 不能同一个人选择同一时间的同一航班 Done
-# Done 测试信用评价成功
-# Done 高信用等级打折
 
-
-    if not request.session.get('is_login', None):
-
-        response['msg'] = message = '您尚未登录'
-        response['status'] = -1
-        return redirect('/login/')
+    # if not request.session.get('is_login', None):
+    #
+    #     response['msg'] = message = '您尚未登录'
+    #     response['status'] = -1
+    #     return redirect('/login/')
     if request.method == 'POST':
         # username = request.session.get('user_name')
             # return render(request, 'book_ticket.html', locals())
@@ -198,18 +217,13 @@ def book_ticket(request):
                     return JsonResponse(response)
                     # return render(request, 'book_ticket.html', locals())
 
-                # if user.balance < money:
-                #     # message = '余额不足，请充值，或请您选择是否支付宝付全款'
-                #     response['status'] = 4
-                #     response['msg'] = message = '余额不足，请使用支付宝充值'
-                #     # TODO 选择
-                #     return JsonResponse(response)
-                #     # return render(request, 'book_ticket.html', locals()) # 此时应还有个充值按钮
+
 
                 # 所以这里使用函数来支付，因为当上面选择支付宝支付的时候也是成功支付了
                 print(concrete_flight)
-                pay_ticket(user, flight, date, money)
+                this_order = pay_ticket(user, flight, date, money)
                 print('after')
+                response['seat_number'] = this_order.seat_number
                 response['msg'] = message = '支付成功'
                 response['status'] = 0
                 print(message)
@@ -234,32 +248,32 @@ def book_ticket(request):
 
 @csrf_exempt
 def cancel_ticket(request):
-# TODO 计划应该是前端传过来必定有的订单来退订，所以不必设置无法退订不存在的订单
-    if not request.session.get('is_login', None):
-        message = '您尚未登录'
 
-        return redirect('/login/')
-    response = {}
-    username = request.session['user_name']
-    user = User.objects.get(name=username)
-    response['token'] = user.name+user.password
+#
+#         return redirect('/login/')
+#     username = response['username']
+
+    # username = request.session['user_name']
+
     if request.method == 'POST':
-        username = request.session.get('user_name')
-        user = User.objects.get(name=username)
-        user_dict = model_to_dict(user)
+
+
         #Done 传入订单号
         cancel_form = forms.cancel_ticket_form(request.POST)
         if cancel_form.is_valid():
+
             order_number = cancel_form.cleaned_data.get('order_number')
             # order_number = request.POST.get('order_number')
             print(order_number)
             order = Order.objects.get(order_number=order_number)
-            # flight_number = request.POST.get('flight_number')
-            # flight_number = order.flight.flight_number
-            # date_str = str(request.POST.get('date'))
-            # year, mouth, day = map(int, date_str.split('-'))
-            # date = datetime.date(year, mouth, day)
-            # the_datetime = order.flight_datetime
+            # username = request.session.get('user_name')
+            username = cancel_form.cleaned_data.get('username')
+            user = User.objects.get(name=username)
+            response['token'] = user.name + user.password
+            user = User.objects.get(name=username)
+            user_dict = model_to_dict(user)
+
+
             try:
                 # flight = Flight.objects.get(flight_number=flight_number)
                 flight=order.flight
@@ -282,7 +296,7 @@ def cancel_ticket(request):
                 seat = FlightSeatingChart.objects.get(concrete_flight=concrete_flight,seat_number=order.seat_number,is_occupied=True)
                 seat.is_occupied = False
 
-                # TODO 不知道是不是欠考虑了什么
+
                 setting_credit(user) # 更新信用
                 user.save()
                 concrete_flight.save()
@@ -314,12 +328,10 @@ def cancel_ticket(request):
     else:
         # return redirect('index/')
         return render(request, 'cancel_ticket.html', locals())
-# TODO 计划应该是前端传过来必定有的订单来退订，所以不必设置无法退订不存在的订单
+# 计划应该是前端传过来必定有的订单来退订，所以不必设置无法退订不存在的订单
 
     # 前端传来航班号和购买机票的航班类型
     # 目前采用html输入航班号和类型来实现。。
-
-
 
          # 航班信息不符合，按道理应该是不存在的
 
@@ -328,6 +340,7 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
     # 还是取消这个设置了，打算用支付宝实现充值就可以了，
     # 这样做反而更麻烦了：加上pay_type对使用支付宝还是余额支付。再说倒也可以
     # seatNumber 默认是-1 如果传进来参数就是自己选座，否则自动分配座位
+    response = login.views.response
     contrete_time = datetime.datetime(
         date.year, date.month, date.day,
         flight.starting_time.hour, flight.starting_time.minute, flight.starting_time.second
@@ -354,12 +367,7 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
                     min_spare_seat = seat_num+1
                     break
 
-                # min_spare_seat = min_spare_seat_dict.get('seat_number__min')
-                # if min_spare_seat is None:
-                #     min_spare_seat = int(seat_num)
-                #     break
-            # min_spare_seat_dict = FlightSeatingChart.objects.filter(is_occupied=False,concrete_flight=contrete_flight).aggregate(Min('seat_number'))
-            #
+
             print('in try')
 
         except:
@@ -390,7 +398,7 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
 
     order.order_is_valid = True
     order.luggage_weight = luggage_weight
-    # TODO 根据行李重量增加钱，应该至少在get_flight_type 后判断，否则加了钱就不能按照钱来找对应的航班了
+
     if luggage_weight >20:
         money += 18 *(luggage_weight-20)# 亲测大兴机场价格
     money = float(money)
@@ -402,7 +410,7 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
         money *= 0.99
     order.price = money
     # if pay_type:
-    #     pass  # TODO 与支付宝对接输入金额
+    #
     user.balance -= money
     user.total_consumption += money
     user.save()
@@ -411,6 +419,7 @@ def pay_ticket(user,flight,date,money,luggage_weight = 0,seatNumber=-1):
     order.concrete_flight = contrete_flight
     order.concrete_flight.save()
     order.save()
+    return order
 
 def get_flight_type(money,flight):
     if money == flight.first_class_price:
@@ -430,17 +439,49 @@ def get_flight_type(money,flight):
 @csrf_exempt
 def paysView(request):
     if request.method == 'POST':
-        if not request.session.get('is_login', None):
-            return redirect('/login/')
-        # money_form= moneyForm(request.POST)
-        # if money_form.is_valid():
-        #     total = money_form.cleaned_data.get('money')
-        username = request.session.get('user_name')
-        user = User.objects.get(name=username)
+
+        print(response)
+
         pay_form = forms.pay_form(request.POST)
         if pay_form.is_valid():
 
+            username = request.POST.get('username')
+            user = User.objects.get(name=username)
             total = int(request.POST.get('money'))
+            # order_id = request.POST.get('order_id')
+            # get orderid from frontend or generated by time
+            # out_trade_no = str(int(time.time()))
+        
+            this_alipay = my_alipay.AliPay(
+                appid="" ,#TODO Replace it with yours
+                app_notify_url= "http://127.0.0.1:8000/api/notify/",
+                # app_notify_url=None,
+                # alipay_public_key_path=os.path.join(BASE_DIR,'kernel/key/public.txt') , # 支付宝公钥
+                # app_private_key_path=os.path.join(BASE_DIR,'kernel/key/private.txt'),  # 应用私钥
+                # sign_type = "RSA2",  # 加密方式
+                # return_url='http://' + request.get_host() + '/#/personal'  # 支付成功后的返回地址，
+                return_url =  'http://127.0.0.1:8000/#/personal',
+                debug = True
+            )
+
+            query_params = this_alipay.direct_pay(
+                subject="机票", # can be generated  by yourself
+                out_trade_no = str(int(time.time())),
+                total_amount = total,
+                # return_url='http://' + request.get_host() + '/#/personal'  # 支付成功后的返回地址，
+
+            )
+            return_url = 'http://' + request.get_host() + '/#/personal'  # 支付成功后的返回地址，
+
+            url = "https://openapi.alipaydev.com/gateway.do?{}".format(query_params)
+            print(url)
+            # url = url.replace('pay¬ify','pay&notiy')
+            # url = url.replace('RSA2×tamp', 'RSA2&timestamp')
+            # print(url)
+            response['url'] = url
+            response['return_url'] = return_url
+            return JsonResponse(response)
+
             print(total,'none')
             if total:
                 out_trade_no = str(int(time.time()))
@@ -450,8 +491,14 @@ def paysView(request):
                 user.balance += total
                 user.save()
                 return_url = 'http://' + request.get_host()+'/#/personal' # 支付成功后的返回地址，
+
                 url = get_pay(out_trade_no, total, return_url)
+                # data = request.query_params.dict()
+                # signature = data.pop("sign")
+                # print(data)
+                # print(signatur
                 response['url'] = url
+
                 response['return_url'] = return_url
                 return JsonResponse(response)
                 # return redirect(url)
@@ -463,7 +510,7 @@ def paysView(request):
     else:
         return render(request, 'pay.html', locals())
         # return JsonResponse({'message': '你的请求不是POST'})
-        # return redirect('shopper:shopcart')# TODO ###
+        # return redirect('shopper:shopcart')#
 
 def credit_evaluation(user):
     orders = Order.objects.filter(user=user,order_is_valid=False)
@@ -507,8 +554,42 @@ def setting_credit(user):
     else:
         return False
 
+@csrf_exempt
+def update_order(request):
+    if request.method == 'POST':
+        print('in update')
+        body_str = request.body.decode('utf-8')
+        post_data = parse_qs(body_str)
+
+        post_dict = {}
+
+        for k,v in post_data.items():
+            post_dict[k] = v[0]
+        this_alipay =my_alipay.AliPay(
+                appid="", #TODO Replace it with yours
+                app_notify_url = "http://127.0.0.1:8000/api/notify/",
+                return_url =  'http://127.0.0.1:8000/#/personal',
+                debug = True
+            )
+
+        sign = post_dict.pop('sign',None)
+
+        status = this_alipay.verify(post_dict,sign)
+
+        if status:
+            order_id = post_dict.get('out_trade_no')
+            print(order_id)
+            print('支付成功')
+            return HttpResponse("支付成功")
+        else:
+            print('支付失败')
+            return HttpResponse("支付失败")
+    print('not a post')
+    return HttpResponse('not a post')
+
+@csrf_exempt
 def get_date(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         date = datetime.date.today()
         response['date'] = date
         return JsonResponse(response)

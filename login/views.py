@@ -10,12 +10,12 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 
+import kernel.views
 from . import forms
 from .models import *
 # from . import
 from background.models import *
-
-from django.conf import settings
+from AirplaneReservationSystem import settings
 
 import json
 
@@ -30,92 +30,68 @@ def hash_code(s, salt='bflame'):
     return h.hexdigest()
 
 
-
+@csrf_exempt
 def index(request): # 个人中心，
     # 向前端传送个人的全部信息和个人的全部订单
 
-    if not request.session.get('is_login',None):
-        return redirect('/')
+    # if not request.session.get('is_login',None):
+    #     return redirect('/')
 
     if request.method == 'POST':
-        pass
-        # 每一个个人信息都传过来直接保存
-    else:
-        username = request.session.get('user_name')
-        user = User.objects.get(name = username)
-        user_dict = model_to_dict(user)
-        # 应该可以通过user.''来访问
-        # print(json.dumps(user))
-        # print(user_value)
+        # print(request.POST.get('username'))
+        # username = request.session.get('user_name')
+        username_form = forms.usernameForm(request.POST)
+        if username_form.is_valid():
 
-        response['user'] = user_dict
-        try:
-            orders_after = Order.objects.filter(user=user,flight_datetime__gte=datetime.datetime.now()).all()
-            orders_before = Order.objects.filter(user=user,flight_datetime__lte=datetime.datetime.now()).all()
-            flights_before = {}
-            flights_after = {}
-            concrete_flights_before = {}
-            concrete_flights_after = {}
+            # username = response['username']
+            username = username_form.cleaned_data.get('username')
 
-            show_order_before = []
-            show_order_after = []
+            print(username)
+            user = User.objects.get(name = username)
 
-            # orders_dict = model_to_dict(orders)
-            # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
-            #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
-            #                                          'seat_number','order_is_valid','luggage_weight','flight_type'))
-            # orders = serializers.serialize('xml', Order.objects.filter(user=user).all(),)
-            # 只能打印出来，当然最终应使用第一种查询方法
-        except Order.DoesNotExist:
-            message = '订单不存在'
-            response['msg'] = '订单不存在'
-            response['status'] = 1
-            # response[]
-            return JsonResponse(response)
-        # return JsonResponse({'message':message,'user_dict':user_dict})
-        except Exception as e:
-            # print(flights_after)
-            response['status'] = 2
-            response['msg'] = str(e)
-            return JsonResponse(response)
-        i=0
-        for order in orders_before:
-            flight_dict = model_to_dict(order.flight)
-            concrete_flight_dict = model_to_dict(order.concrete_flight)
-            flights_before.update({'flight{}'.format(i):flight_dict})
-            print('flight{}'.format(i))
-            mydict = {}
-            mydict['order_id'] = order.order_number
-            mydict['flight_number'] = order.flight.flight_number
-            mydict['valid'] = order.order_is_valid
-            mydict['origination'] = str(order.flight.origination)
-            mydict['destination'] = str(order.flight.destination)
-            mydict['departure_airport'] = str(order.flight.departure_airport)
-            mydict['landing_airport'] = str(order.flight.landing_airport)
-            mydict['starting_time'] = order.flight.starting_time.strftime("%H:%M:%S")
-            mydict['flight_time'] = order.flight.flight_time.strftime("%H:%M:%S")
-            mydict['arrival_time'] = order.flight.arrival_time.strftime("%H:%M:%S")
-            mydict['date'] = order.concrete_flight.flight_datetime.strftime('%Y-%m-%d')
-            mydict['price'] = order.price
-            mydict['flight_type'] = order.flight_type
+            kernel.views.setting_credit(user)
+            user_dict = model_to_dict(user)
+            # 应该可以通过user.''来访问
+            # print(json.dumps(user))
+            # print(user_value)
 
-            show_order_before.append(mydict)
+            response['user'] = user_dict
+            try:
+                orders_after = Order.objects.filter(user=user,flight_datetime__gte=datetime.datetime.now()).all()
+                orders_before = Order.objects.filter(user=user,flight_datetime__lte=datetime.datetime.now()).all()
+                flights_before = {}
+                flights_after = {}
+                concrete_flights_before = {}
+                concrete_flights_after = {}
 
-            concrete_flights_before.update({'concrete_flight{}'.format(i):concrete_flight_dict})
-            i += 1
-        i=0
-        for order in orders_after:
-            if order.order_is_valid:
+                show_order_before = []
+                show_order_after = []
+
+                # orders_dict = model_to_dict(orders)
+                # orders = serializers.serialize('xml',Order.objects.filter(user=user).all(),
+                #                                fileds = ('order_number','flight' ,'flight_datetime,','user','price','order_time',
+                #                                          'seat_number','order_is_valid','luggage_weight','flight_type'))
+                # orders = serializers.serialize('xml', Order.objects.filter(user=user).all(),)
+                # 只能打印出来，当然最终应使用第一种查询方法
+            except Order.DoesNotExist:
+                message = '订单不存在'
+                response['msg'] = '订单不存在'
+                response['status'] = 1
+                # response[]
+                return JsonResponse(response)
+            # return JsonResponse({'message':message,'user_dict':user_dict})
+            except Exception as e:
+                # print(flights_after)
+                response['status'] = 2
+                response['msg'] = str(e)
+                return JsonResponse(response)
+            i=0
+            for order in orders_before:
                 flight_dict = model_to_dict(order.flight)
-
                 concrete_flight_dict = model_to_dict(order.concrete_flight)
-                flights_after.update({'flight{}'.format(i): flight_dict})
+                flights_before.update({'flight{}'.format(i):flight_dict})
                 print('flight{}'.format(i))
-                concrete_flights_before.update({'concrete_flight{}'.format(i): concrete_flight_dict})
-                i += 1
-
                 mydict = {}
-
                 mydict['order_id'] = order.order_number
                 mydict['flight_number'] = order.flight.flight_number
                 mydict['valid'] = order.order_is_valid
@@ -129,25 +105,61 @@ def index(request): # 个人中心，
                 mydict['date'] = order.concrete_flight.flight_datetime.strftime('%Y-%m-%d')
                 mydict['price'] = order.price
                 mydict['flight_type'] = order.flight_type
+                mydict['seat_number'] = order.seat_number
 
-                show_order_after.append(mydict)
+                show_order_before.append(mydict)
 
-        response['orders_after'] = json.loads(serializers.serialize("json",orders_after))
-        response['orders_before'] = json.loads(serializers.serialize("json",orders_before))
-        response['flights_after'] = flights_after
-        response['flights_before'] = flights_before
-        print(show_order_before)
+                concrete_flights_before.update({'concrete_flight{}'.format(i):concrete_flight_dict})
+                i += 1
+            i=0
+            for order in orders_after:
+                if order.order_is_valid:
+                    flight_dict = model_to_dict(order.flight)
 
-        response['show_order_before'] = json.dumps(show_order_before, ensure_ascii=False)
-        response['show_order_after'] = json.dumps(show_order_after, ensure_ascii=False)
+                    concrete_flight_dict = model_to_dict(order.concrete_flight)
+                    flights_after.update({'flight{}'.format(i): flight_dict})
+                    print('flight{}'.format(i))
+                    concrete_flights_before.update({'concrete_flight{}'.format(i): concrete_flight_dict})
+                    i += 1
 
-        response['concrete_flights_after'] = concrete_flights_after
-        response['concrete_flights_before'] = concrete_flights_before
+                    mydict = {}
+
+                    mydict['order_id'] = order.order_number
+                    mydict['flight_number'] = order.flight.flight_number
+                    mydict['valid'] = order.order_is_valid
+                    mydict['origination'] = str(order.flight.origination)
+                    mydict['destination'] = str(order.flight.destination)
+                    mydict['departure_airport'] = str(order.flight.departure_airport)
+                    mydict['landing_airport'] = str(order.flight.landing_airport)
+                    mydict['starting_time'] = order.flight.starting_time.strftime("%H:%M:%S")
+                    mydict['flight_time'] = order.flight.flight_time.strftime("%H:%M:%S")
+                    mydict['arrival_time'] = order.flight.arrival_time.strftime("%H:%M:%S")
+                    mydict['date'] = order.concrete_flight.flight_datetime.strftime('%Y-%m-%d')
+                    mydict['price'] = order.price
+                    mydict['flight_type'] = order.flight_type
+                    mydict['seat_number'] = order.seat_number
+                    show_order_after.append(mydict)
+
+            response['orders_after'] = json.loads(serializers.serialize("json",orders_after))
+            response['orders_before'] = json.loads(serializers.serialize("json",orders_before))
+            response['flights_after'] = flights_after
+            response['flights_before'] = flights_before
+            print(show_order_before)
+
+            response['show_order_before'] = json.dumps(show_order_before, ensure_ascii=False)
+            response['show_order_after'] = json.dumps(show_order_after, ensure_ascii=False)
+
+            response['concrete_flights_after'] = concrete_flights_after
+            response['concrete_flights_before'] = concrete_flights_before
 
 
-        response['user'] = model_to_dict(user)
-        response['status'] = 0
-        return JsonResponse(response,safe=False)
+            response['user'] = model_to_dict(user)
+            response['status'] = 0
+            return JsonResponse(response)
+        else:
+            response['status'] = 7
+            response['msg'] = '用户名非法'
+            return JsonResponse(response)
         # return HttpResponse(json.dumps(response),content_type="application/json")
     # return JsonResponse(json.dumps({'user':user_dict,'orders':orders},cls=DjangoJSONEncoder),safe=False)
     # return render(request, 'login/index.html')
@@ -158,6 +170,8 @@ def  change_information(request):
         if information_form.is_valid():
             username = information_form.cleaned_data.get('username')
             phone_number = information_form.cleaned_data.get('phone_number')
+            new_username = information_form.cleaned_data.get('new_username')
+
 
             sex = information_form.cleaned_data.get('sex')
             birthday_str = information_form.cleaned_data.get('birthday')
@@ -167,15 +181,16 @@ def  change_information(request):
 
 
 
-            old_username = request.session['user_name']
-
-            if username != old_username:
+            # old_username = request.session['user_name']
+            old_username = username
+            username = new_username
+            if new_username != old_username:
                 same_name_user = User.objects.filter(name=username)
                 if same_name_user:
                     response['status'] = 4
                     response['msg'] = message = '用户名已经存在'
                     return JsonResponse(response)
-            request.session['user_name'] = username
+
 
             user = User.objects.get(name=old_username)
             if phone_number != user.phone_number:
@@ -184,6 +199,7 @@ def  change_information(request):
                     response['status'] = 8
                     response['msg'] = message = '相同的手机号已经存在'
                     return JsonResponse(response)
+            request.session['user_name'] = username
             user.name = username
             user.phone_number = phone_number
             user.sex = sex
@@ -192,6 +208,7 @@ def  change_information(request):
             user.save()
             response['token'] = user.name + user.password
             response['status'] = 0
+            response['username'] = username
             response['msg'] = message = '更改成功'
             return JsonResponse(response)
         else:
@@ -214,6 +231,7 @@ def login(request):
     if request.method == 'POST':
         login_form = forms.UserForm(request.POST)
         message = response['msg'] = '请检查填写的内容！'
+        print(login_form)
         if login_form.is_valid():
             username = login_form.cleaned_data.get('username')
             password = login_form.cleaned_data.get('password')
@@ -244,6 +262,8 @@ def login(request):
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.name
+                # request.session.
+                response['username'] = username
                 if user.is_super:
                     response['status'] = 1
                     response['msg'] = '欢迎管理员'+user.name+'!'
@@ -254,8 +274,11 @@ def login(request):
 
                 token = username+password
                 response['token'] = token
-                message = response['msg'] = '登录成功'
-                # TODO is_super 跳转管理员界面
+                print(request.session['user_name'])
+                print(request.session.keys)
+                msg = '欢迎登陆，您上次登录的时间为'+str(user.last_login_time)
+                message = response['msg'] = msg
+
                 return JsonResponse(response)
                 # return redirect('/index/')
             else:
@@ -366,11 +389,15 @@ def register(request):
 def logout(request):
     # if not request.session.get('is_login', None):
     #     return redirect("/login/")
-    request.session.flush()
-    response['token'] = ''
+    if request.method == 'POST':
 
-    return redirect("/")# 修改为返回主界面
-    # return redirect("/login/")
+        # username_form = forms.usernameForm(request.POST)
+        request.session.flush()
+        response['token'] = ''
+        return JsonResponse(response)
+
+        # return redirect("/")# 修改为 返回主界面
+        # return redirect("/login/")
 
 def make_confirm_string(user):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -380,8 +407,8 @@ def make_confirm_string(user):
 def user_confirm(request):
     code = request.GET.get('code', None)
     message = ''
+    print(code)
     try:
-
         confirm = ConfirmString.objects.get(code=code)
     except:
 
