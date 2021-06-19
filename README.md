@@ -11,7 +11,7 @@ BUAASE Big Project  sophomore year Software Engineering
 
 ![image-20210618192622098](https://github.com/BFlameSwift/img/blob/main/20210618192634main.png)
 
-
+![image-20210619105854035](https://github.com/BFlameSwift/img/blob/main/20210619105903.png)
 
 
 
